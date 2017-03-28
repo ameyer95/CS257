@@ -1,3 +1,5 @@
+//Anna Meyer and Patty Commins
+
 package edu.carleton.annameyer;
 
 public class Main {
