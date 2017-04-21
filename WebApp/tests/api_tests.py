@@ -16,8 +16,7 @@ class apiTester(unittest.TestCase):
         pass
     # Tests to see if our input: characters, get: list of spells api query works with Ron Weasley
     def testCharToSpells(self):
-        # Should change spell_char in url to just characters?
-        url = "http://standardbookofspells.com/spell_char/Ron_Weasley/"
+        url = "http://standardbookofspells.com/instances/Ron_Weasley/"
         data_from_api = urllib.urlopen(url).read()
         string_from_server = data_from_api.decode('utf-8')
         spell_list = json.loads(string_from_server)
@@ -26,14 +25,13 @@ class apiTester(unittest.TestCase):
         #Is object stuff going to matter?
         self.assertEqual(spell_list, expected_list)
         #If so, we can do this
-        self.assertEqual(spell_list.size(), expected_list.size())
+        self.assertEqual(len(spell_list), len(expected_list))
         for spell in spell_list:
-            self.assertTrue(expected_list.contains(spell))
+            self.assertTrue(spell in expected_list)
 
     #Tests whether our input: book, get: list of spells api query works with Deathly Hallows
     def bookToSpells(self):
-        #Should change spell_book in url to just book?
-        url = 'http://standardbookofspells.com/spell_book/Deathly_Hallows/'
+        url = 'http://standardbookofspells.com/instances/Deathly_Hallows/'
         data_from_api = urllib.urlopen(url).read()
         string_from_server = data_from_api.decode('utf-8')
         spell_list = json.loads(string_from_server)
@@ -46,9 +44,9 @@ class apiTester(unittest.TestCase):
         # Is object stuff going to matter?
         self.assertEqual(spell_list, expected_list)
         # If so, we can do this
-        self.assertEqual(spell_list.size(), expected_list.size())
+        self.assertEqual(len(spell_list), len(expected_list))
         for spell in spell_list:
-            self.assertTrue(expected_list.contains(spell))
+            self.assertTrue(spell in expected_list)
 
 
 if __name__ == '__main__':
