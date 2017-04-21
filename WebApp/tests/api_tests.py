@@ -11,13 +11,12 @@ import urllib
 
 class apiTester(unittest.TestCase):
     def setUp(self):
-
+        pass
     def tearDown(self):
-
-    '''Tests to see if our input: characters, get: list of spells api query works
-    with Ron Weasley'''
+        pass
+    # Tests to see if our input: characters, get: list of spells api query works with Ron Weasley
     def testCharToSpells(self):
-        #Should change spell_char in url to just characters?
+        # Should change spell_char in url to just characters?
         url = "http://standardbookofspells.com/spell_char/Ron_Weasley/"
         data_from_api = urllib.urlopen(url).read()
         string_from_server = data_from_api.decode('utf-8')
@@ -31,8 +30,8 @@ class apiTester(unittest.TestCase):
         for spell in spell_list:
             self.assertTrue(expected_list.contains(spell))
 
-    '''Tests whether our input: book, get: list of spells api query works with Deathly Hallows'''
-    def bookToSpells:
+    #Tests whether our input: book, get: list of spells api query works with Deathly Hallows
+    def bookToSpells(self):
         #Should change spell_book in url to just book?
         url = 'http://standardbookofspells.com/spell_book/Deathly_Hallows/'
         data_from_api = urllib.urlopen(url).read()
@@ -52,5 +51,5 @@ class apiTester(unittest.TestCase):
             self.assertTrue(expected_list.contains(spell))
 
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     unittest.main()
