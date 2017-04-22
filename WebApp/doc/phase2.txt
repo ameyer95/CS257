@@ -1,0 +1,73 @@
+DATA TABLES
+
+CREATE TABLE types_of_spells (
+    id SERIAL
+    type TEXT
+    PRIMARY KEY(id)
+);
+    
+CREATE TABLE HP_books (
+    id SERIAL
+    name TEXT
+    PRIMARY KEY(id)
+);
+
+CREATE TABLE characters (
+    id SERIAL
+    first_name TEXT
+    last_name TEXT
+    PRIMARY KEY(id)
+);
+    
+CREATE TABLE spells (
+    id SERIAL
+    incantation TEXT
+    type_id INT
+    purpose TEXT
+    PRIMARY KEY(id)
+);
+    
+CREATE TABLE instances (
+    id SERIAL
+    book_id INT
+    spell_id INT
+    character_id INT
+    excerpt TEXT
+);
+
+API QUERIES
+
+SYNOPSIS: Input a character's name and get a list of all the spells they used.
+QUERY (GET): /characters/instances/spells/<character_name>/
+RESPONSE: A list of spells that <character_name> used
+EXAMPLE: http://standardbookofspells.com/characters/instances/spells/Ron_Weasley/
+[Alohomora, Accio]
+
+SYNOPSIS: Input a book number and recieve a list of all the spells used in that book.
+QUERY (GET): /instances/<book_num>/
+RESPONSE: A list of spells used in book number <book_num>.
+EXAMPLE: http://standardbookofspells.com/instances/7
+[Avada Kedavra, Accio, Expelliarmus, Sectumsempra, Protego]
+
+SYNOPSIS: Input a spell name and learn what it does.
+QUERY (GET): /spells/<spell_name>/
+RESPONSE: A dictionary where the first key is type of spel and the second key is purpose of the spell.
+EXAMPLE: http://standardbookofspells.com/spells/flagrate/
+{'type':'Spell','purpose':'Allows user to write on objects'}
+
+SYNOPSIS: Learn how many times a spell is used
+QUERY (GET): /spells/instances/<spell_name>/
+RESPONSE: An integer value corresponding to the number of times <spell_name> was cast in all Harry Potter books.
+EXAMPLE: http://standardbookofspells.com/spells/instances/<impedimenta>/
+
+SYNOPSIS: Learn how many times a given spell is used in a given book.
+QUERY (GET): /spells/instances/<spell_name>/<book_num>/
+RESPONSE: An integer value corresponding to the number of times <spell_name> was cast in book number <book_num>.
+EXAMPLE: http://standardbookofspells.com/spells/instances/Lumos/4/
+4
+
+SYNOPSIS: Learn which characters use a given spell.
+QUERY (GET): /spells/instances/characters/<spell_name>/
+RESPONSE: A list of characters who use that spell.
+EXAMPLE: http://standardbookofspells.com/spells/instances/characters/Accio/
+[Harry Potter, Molly Weasley, Fred Weasley, George Weasley, Sirius Black, Bellatrix Lestrange, Ron Weasley, Hermione Granger, Filius Flitwick]
