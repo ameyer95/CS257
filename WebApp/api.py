@@ -105,8 +105,8 @@ def get_spell_by_id(spell_id):
     'spell_effect' (string), 'spell_id' (int) and 'url' (string). The URL can be used to access
      this spell in the future.
      '''
-    query = '''SELECT id, spell_name, type_id, spell_effect
-                FROM spell_names WHERE id = {0}'''.format(spell_id)
+    query = '''SELECT id, incantation, type_id, purpose
+                FROM spells WHERE id = {0}'''.format(spell_id)
 
     rows = _fetch_all_rows_for_query(query)
     if len(rows) > 0:
@@ -126,10 +126,10 @@ def get_spell_by_name(spell_name):
     If the spell cannot be found in our database, will return an
     empty list.
     '''
-    query = '''SELECT id, spell_name, type_id, spell_effect 
-                FROM spell_names
-                WHERE UPPER(spell_name) LIKE UPPER('%{0}%)
-                ORDER BY spell_name'''.format(spell_name)
+    query = '''SELECT id, incantation, type_id, purpose 
+                FROM spells
+                WHERE UPPER(incantation) LIKE UPPER('%{0}%)
+                ORDER BY incantation'''.format(spell_name)
 
     spell_list = []
     for row in _fetch_all_rows_for_query(query):
@@ -146,17 +146,17 @@ def get_spells_by_character(character_id):
     Returns a list of all the spells that a given 
     character used. 
     '''
-    query = '''SELECT spell_names.id, spells_names.spell_name, spell_names.type_id, spell_names.spell_effect
-                FROM spell_names, instances, characters
-                WHERE spell_names.id = instances.spell_id
-                AND characters.id = instances.char_id
+    query = '''SELECT spells.id, spells.incantation, spells.type_id, spells.purpose
+                FROM spells, instances, characters
+                WHERE spells.id = instances.spell_id
+                AND characters.id = instances.character_id
                 AND characters.id = {0}
-                ORDER BY spell_names.spell_name'''.format({0})
+                ORDER BY spells.incantation'''.format({0})
 
     spell_list = []
     for row in _fetch_all_rows_for_query(query):
         url = flask.url_for('get_spell_by_id', spell_id = row[0], _external = True)
-        spell = {'spell_id':row[0], 'spell_name':row[1], 'type_id':row[2], 'spell_effect':row[3],
+        spell = {'spell_id':row[0], 'incantation':row[1], 'type_id':row[2], 'purpose':row[3],
                  'url':url}
         spell_list.append(spell)
 
@@ -180,7 +180,7 @@ def get_book_by_id(book_id):
     with keys 'book_name' (string), 'book_id' (int) and 'url' (string). The URL can be used to access
      this book in the future.
      '''
-    query = '''SELECT id, book_name
+    query = '''SELECT id, name
                 FROM books WHERE id = {0}'''.format(book_id)
 
     rows = _fetch_all_rows_for_query(query)
@@ -200,8 +200,8 @@ def get_book_id_by_name(book_name):
     with keys 'book_name' (string), 'book_id' (int) and 'url' (string). The URL can be used to access
      this book in the future.
      '''
-    query = '''SELECT id, book_name
-                FROM books WHERE book_name = {0}'''.format(book_name)
+    query = '''SELECT id, name
+                FROM books WHERE name = {0}'''.format(book_name)
 
     rows = _fetch_all_rows_for_query(query)
     if len(rows) > 0:
@@ -218,17 +218,17 @@ def get_spells_by_book(book_id):
     ''' 
     Returns a list of all the spells used in a given book. 
     '''
-    query = '''SELECT spell_names.id, spells_names.spell_name, spell_names.type_id, spell_names.spell_effect
-                FROM spell_names, instances, books
-                WHERE spell_names.id = instances.spell_id
+    query = '''SELECT spells.id, spells.incantation, spells.type_id, spells.purpose
+                FROM spells, instances, books
+                WHERE spells.id = instances.spell_id
                 AND books.id = instances.book_id
                 AND books.id = {0}
-                ORDER BY spell_names.spell_name'''.format({0})
+                ORDER BY spells.incantation'''.format({0})
 
     spell_list = []
     for row in _fetch_all_rows_for_query(query):
         url = flask.url_for('get_spell_by_id', spell_id=row[0], _external=True)
-        spell = {'spell_id': row[0], 'spell_name': row[1], 'type_id': row[2], 'spell_effect': row[3],
+        spell = {'spell_id': row[0], 'incantation': row[1], 'type_id': row[2], 'purpose': row[3],
                  'url': url}
         spell_list.append(spell)
 
@@ -251,10 +251,10 @@ def get_characters_by_spell(spell_id):
     Returns a list of all characters who used the given spell.
     '''
     query = '''SELECT characters.id, characters.first_name, characters.last_name
-                FROM spell_names, instances, characters
-                WHERE spell_names.id = instances.spell_id
-                AND characters.id = instances.char_id
-                AND spell_names.id = {0}
+                FROM spells, instances, characters
+                WHERE spells.id = instances.spell_id
+                AND characters.id = instances.character_id
+                AND spells.id = {0}
                 ORDER BY characters.last_name, characters.first_name'''.format({0})
 
     character_list = []
@@ -266,13 +266,13 @@ def get_characters_by_spell(spell_id):
 
     return json.dumps(character_list)
 
-@app.route('/spells/<spell_name>')
-def get_characters_by_spell_name(spell_name):
+@app.route('/spells/<incantation>')
+def get_characters_by_spell_name(incantation):
     ''' 
     Returns a list of all the characters who used a given spell. 
     Allows the user to input the spell name as a string, then finds the associated ID and
     calls get_characters_by_spell using that ID'''
-    spell_id = get_spell_by_name(spell_name)
+    spell_id = get_spell_by_name(incantation)
     return get_characters_by_spell(spell_id)
 
 @app.route('/spells/<spell_id>')
@@ -290,14 +290,14 @@ def get_spell_count(spell_id):
         count = row[0]
     return json.dumps(count)
 
-@app.route('/spells/<spell_name')
-def get_spell_count_by_name(spell_name):
+@app.route('/spells/<incantation>')
+def get_spell_count_by_name(incantation):
     ''' 
     Return the number of time a given spell was used across all books.
     Allows the user to input the spell name as a string, then finds the associated
     ID number and calls the get_spell_count method.
     '''
-    spell_id = get_spell_by_name(spell_name)
+    spell_id = get_spell_by_name(incantation)
     return get_spell_count(spell_id)
 
 @app.route('/help')
