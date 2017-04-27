@@ -300,6 +300,38 @@ def get_spell_count_by_name(incantation):
     spell_id = get_spell_by_name(incantation)
     return get_spell_count(spell_id)
 
+
+
+
+
+@app.route('/spells/<spell_id>')
+def get_spell_count_by_book(spell_id, book_id):
+    ''' 
+    Returns the number of time a given spell (input as an ID number) was
+    used across a given books
+    '''
+    query = '''SELECT COUNT(*)
+                FROM instances
+                WHERE spell_id = {0}
+                AND book_id = {1}
+                '''.format({0})
+
+    for row in _fetch_all_rows_for_query(query):
+        url = flask.url_for('get_spell_count_by_book', spell_id={0}, _external=True)
+        count = row[0]
+    return json.dumps(count)
+
+@app.route('/spells/<book_name>/<incantation>')
+def get_spell_count_by_book_by_names(incantation, book_name):
+    ''' 
+    Return the number of time a given spell was used across a given books.
+    Allows the user to input the spell name as a string and the book name as a string, then finds the associated
+    ID numbers and calls the get_spell_count_by_book method.
+    '''
+    spell_id = get_spell_by_name(incantation)
+    book_id = get_book_id_by_name(book_name)
+    return get_spell_count_by_book(spell_id, book_id)
+
 @app.route('/help')
 def help():
     rule_list = []
