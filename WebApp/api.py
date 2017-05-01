@@ -38,8 +38,8 @@ def _fetch_all_rows_for_query(query):
     except Exception as e:
         print('Error querying database:', e, file=sys.stderr)
 
-        connection.close()
-        return rows
+    connection.close()
+    return rows
 
         # related to user interface only
         # determines what programs can call your API
@@ -50,6 +50,7 @@ def set_headers(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
+#works
 @app.route('/characters')
 def get_all_characters():
     '''
@@ -57,7 +58,7 @@ def get_all_characters():
     '''
     query = '''SELECT id, first_name, last_name
                 FROM characters
-                ORDER BY last_name, first_name'''.format()
+                ORDER BY last_name, first_name'''
     character_list = []
     for row in _fetch_all_rows_for_query(query):
         url = flask.url_for('get_character_by_id', character_id = row[0], _external = True)
@@ -65,21 +66,25 @@ def get_all_characters():
         character_list.append(character)
     return json.dumps(character_list)
 
+#works
 @app.route('/spells')
 def get_all_spells():
     '''
     Return a list of all spells in the database.
     '''
-    query = '''SELECT id, spell_name, spell_effect
+    query = '''SELECT id, incantantation, purpose
                 FROM spells
-                ORDER BY spell_name'''.format()
+                ORDER BY incantantation'''
     spell_list = []
+    
+
     for row in _fetch_all_rows_for_query(query):
-        url = flask.url_for('get_spell_by_id', character_id = row[0], _external = True)
+        url = flask.url_for('get_spell_by_id', spell_id = row[0], _external = True)
         spell = {'spell_id':row[0], 'spell_name':row[1], 'effect':row[2], 'url':url}
         spell_list.append(spell)
     return json.dumps(spell_list)
 
+#works
 @app.route('/books')
 def get_all_books():
     '''
@@ -87,7 +92,7 @@ def get_all_books():
     '''
     query = '''SELECT id, name
                 FROM books
-                ORDER BY id'''.format()
+                ORDER BY id'''
     book_list = []
     for row in _fetch_all_rows_for_query(query):
         url = flask.url_for('get_book_by_id', book_id = row[0], _external = True)
@@ -95,7 +100,7 @@ def get_all_books():
         book_list.append(book)
     return json.dumps(book_list)
 
-
+#works
 @app.route('/characters/<character_name>')
 def get_char_id_by_name(character_name):
     ''' 
@@ -106,9 +111,9 @@ def get_char_id_by_name(character_name):
     '''
     query = '''SELECT id, first_name, last_name 
                 FROM characters
-                WHERE UPPER(last_name) LIKE UPPER('%{0}%)
-                or UPPER(first_name) LIKE UPPER('%{0}%)
-                or UPPER(first_name + ' ' + last_name) LIKE UPPER('%')
+                WHERE UPPER(last_name) LIKE UPPER('%{0}%')
+                or UPPER(first_name) LIKE UPPER('%{0}%')
+                or UPPER(first_name || ' ' || last_name) LIKE UPPER('%{0}%')
                 ORDER BY last_name, first_name'''.format(character_name)
 
     character_list = []
@@ -120,6 +125,7 @@ def get_char_id_by_name(character_name):
 
     return json.dumps(character_list)
 
+#works
 @app.route('/characters/char_id/<character_id>')
 def get_character_by_id(character_id):
     ''' 
@@ -142,6 +148,7 @@ def get_character_by_id(character_id):
 
     return json.dumps({})
 
+#works
 @app.route('/spells/spell_id/<spell_id>')
 def get_spell_by_id(spell_id):
     ''' 
@@ -164,6 +171,7 @@ def get_spell_by_id(spell_id):
 
     return json.dumps({})
 
+#works
 @app.route('/spells/<spell_name>')
 def get_spell_by_name(spell_name):
     ''' 
@@ -186,6 +194,7 @@ def get_spell_by_name(spell_name):
 
     return json.dumps(spell_list)
 
+#works
 @app.route('/characters_spells/char_id/<character_id>')
 def get_spells_by_character(character_id):
     ''' 
@@ -197,7 +206,7 @@ def get_spells_by_character(character_id):
                 WHERE spells.id = instances.spell_id
                 AND characters.id = instances.character_id
                 AND characters.id = {0}
-                ORDER BY spells.incantantation'''.format({0})
+                ORDER BY spells.incantantation'''.format(character_id)
 
     spell_list = []
     for row in _fetch_all_rows_for_query(query):
@@ -216,8 +225,14 @@ def get_spells_by_character_name(character_name):
     finds the associated ID and calls get_spells_by_character
     '''
     character_id = get_char_id_by_name(character_name)
-    return get_spells_by_character(character_id)
+    print(type(character_id))
+    if len(character_id)>0:
+        print(character_id[0]["character_id"])
+        return get_spells_by_character(character_id[0]["character_id"])
+    else:
+        return []
 
+#works
 @app.route('/books/book_id/<book_id>')
 def get_book_by_id(book_id):
     ''' 
@@ -268,8 +283,8 @@ def get_spells_by_book(book_id):
                 FROM spells, instances, books
                 WHERE spells.id = instances.spell_id
                 AND books.id = instances.book_id
-                AND books.id = {0}
-                ORDER BY spells.incantantation'''.format({0})
+                AND books.id = 0
+                ORDER BY spells.incantantation'''.format(0)
 
     spell_list = []
     for row in _fetch_all_rows_for_query(query):
@@ -300,7 +315,7 @@ def get_characters_by_spell(spell_id):
                 FROM spells, instances, characters
                 WHERE spells.id = instances.spell_id
                 AND characters.id = instances.character_id
-                AND spells.id = {0}
+                AND spells.id = 0
                 ORDER BY characters.last_name, characters.first_name'''.format({0})
 
     character_list = []
@@ -358,12 +373,12 @@ def get_spell_count_by_book(spell_id, book_id):
     '''
     query = '''SELECT COUNT(*)
                 FROM instances
-                WHERE spell_id = {0}
-                AND book_id = {1}
-                '''.format({0})
+                WHERE spell_id = 0
+                AND book_id = 1
+                '''.format(0)
 
     for row in _fetch_all_rows_for_query(query):
-        url = flask.url_for('get_spell_by_id', spell_id={0}, _external=True)
+        url = flask.url_for('get_spell_by_id', spell_id=0, _external=True)
         count = row[0]
     return json.dumps(count)
 
