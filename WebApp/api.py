@@ -404,7 +404,7 @@ def get_spell_count_by_book_by_names(incantation, book_name):
     Allows the user to input the spell name as a string and the book name as a string, then finds the associated
     ID numbers and calls the get_spell_count_by_book method.
     '''
-    spell_string = get_spell_by_name(incantation)
+    spell_string = get_spell_by_name(incantation)[0]
     spell_dict = json.loads(spell_string)
     spell_id = spell_dict['spell_id']
     book_string = get_book_id_by_name(book_name)
