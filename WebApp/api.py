@@ -387,6 +387,7 @@ def get_spell_count_by_book(spell_id, book_id):
     used across a given books
     '''
     print("hi")
+    print("{0}", "{1}")
     query = '''SELECT COUNT(*)
                 FROM instances
                 WHERE spell_id = {0}
