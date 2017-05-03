@@ -379,8 +379,7 @@ def get_spell_count_by_name(incantation):
 
 
 
-#internal service error - seems like it does't get through making the query?
-#believe it is because spell_id is a "s
+#works
 @app.route('/books_spell_count/spell_id/<book_id>/<spell_id>')
 def get_spell_count_by_book(book_id, spell_id):
     ''' 
@@ -392,9 +391,6 @@ def get_spell_count_by_book(book_id, spell_id):
                 FROM instances
                 WHERE spell_id = {1}
                 AND book_id = {0}'''.format(book_id, spell_id)
-    print("hi?")
-    print(query)
-    print(type(query))
     for row in _fetch_all_rows_for_query(query):
         url = flask.url_for('get_spell_by_id', spell_id={1}, _external=True)
         count = row[0]
@@ -410,10 +406,10 @@ def get_spell_count_by_book_by_names(incantation, book_name):
     '''
     spell_string = get_spell_by_name(incantation)
     spell_dict = json.loads(spell_string)
-    spell_id = spell_dict[0]['spell_id']
+    spell_id = spell_dict['spell_id']
     book_string = get_book_id_by_name(book_name)
     book_dict = json.loads(book_string)
-    book_id = book_dict[0]['book_id']
+    book_id = book_dict['book_id']
     return get_spell_count_by_book(spell_id, book_id)
 
 #internal service error
