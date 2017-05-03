@@ -102,10 +102,11 @@ def get_all_books():
 
 #works
 @app.route('/characters/<character_name>')
-def get_char_id_by_name(character_name):
+def get_character(character_name):
     ''' 
-    Given a character's first or last name (or both), return the
-    ID number associated with that character.
+    Given a character's first or last name (or both), return 
+    all the information associated with that character. If multiple
+    characters match the input, all matching characters will be included in the output.
     If character cannot be found in our database, will return an
     empty list.
     '''
@@ -224,13 +225,13 @@ def get_spells_by_character_name(character_name):
     Allows the user to input the character's name as a string, then 
     finds the associated ID and calls get_spells_by_character
     '''
-    character_id = get_char_id_by_name(character_name)
-    print(type(character_id))
-    if len(character_id)>0:
-        print(character_id[0]["character_id"])
-        return get_spells_by_character(character_id[0]["character_id"])
-    else:
-        return []
+    character_string = get_character(character_name)
+    character_dict = json.loads(character_string)
+    print(character_dict) #this is what we want it to be
+    print(character_dict[0]) #this is what we want it to be
+    print(character_dict[0]['character_id']) #this doesn't print at all
+    idNum = character_dict[0]['character_id']
+    return get_spells_by_character(idNum)
 
 #works
 @app.route('/books/book_id/<book_id>')
@@ -253,6 +254,7 @@ def get_book_by_id(book_id):
 
     return json.dumps({})
 
+#returns an empty list
 @app.route('/books/<book_name>')
 def get_book_id_by_name(book_name):
     ''' 
@@ -262,7 +264,7 @@ def get_book_id_by_name(book_name):
      this book in the future.
      '''
     query = '''SELECT id, name
-                FROM books WHERE name = {0}'''.format(book_name)
+                FROM books WHERE UPPER name LIKE UPPER('%{0}%')'''.format(book_name)
 
     rows = _fetch_all_rows_for_query(query)
     if len(rows) > 0:
@@ -273,7 +275,7 @@ def get_book_id_by_name(book_name):
 
     return json.dumps({})
 
-
+#works
 @app.route('/books_spells/book_id/<book_id>')
 def get_spells_by_book(book_id):
     ''' 
@@ -283,8 +285,8 @@ def get_spells_by_book(book_id):
                 FROM spells, instances, books
                 WHERE spells.id = instances.spell_id
                 AND books.id = instances.book_id
-                AND books.id = 0
-                ORDER BY spells.incantantation'''.format(0)
+                AND books.id = {0}
+                ORDER BY spells.incantantation'''.format(book_id)
 
     spell_list = []
     for row in _fetch_all_rows_for_query(query):
@@ -295,6 +297,7 @@ def get_spells_by_book(book_id):
 
     return json.dumps(spell_list)
 
+#returns an empty list
 @app.route('/books_spells/<book_name>')
 def get_spells_by_book_name(book_name):
     '''
@@ -303,9 +306,12 @@ def get_spells_by_book_name(book_name):
     that string to the book ID and calls the get_spells_by_book method
     '''
 
-    book_id = get_book_id_by_name(book_name)
+    book_string = get_book_id_by_name(book_name)
+    book_dict = json.loads(book_string)
+    book_id = book_dict[0]['book_id']
     return get_spells_by_book(book_id)
 
+#works
 @app.route('/characters_spell/spell_id/<spell_id>')
 def get_characters_by_spell(spell_id):
     '''
@@ -315,8 +321,8 @@ def get_characters_by_spell(spell_id):
                 FROM spells, instances, characters
                 WHERE spells.id = instances.spell_id
                 AND characters.id = instances.character_id
-                AND spells.id = 0
-                ORDER BY characters.last_name, characters.first_name'''.format({0})
+                AND spells.id = {0}
+                ORDER BY characters.last_name, characters.first_name'''.format(spell_id)
 
     character_list = []
     for row in _fetch_all_rows_for_query(query):
@@ -327,15 +333,19 @@ def get_characters_by_spell(spell_id):
 
     return json.dumps(character_list)
 
+#returns an empty list
 @app.route('/characters_spell/<incantation>')
 def get_characters_by_spell_name(incantation):
     ''' 
     Returns a list of all the characters who used a given spell. 
     Allows the user to input the spell name as a string, then finds the associated ID and
     calls get_characters_by_spell using that ID'''
-    spell_id = get_spell_by_name(incantation)
+    spell_string = get_spell_by_name(incantation)
+    spell_dict = json.loads(spell_string)
+    spell_id = spell_dict[0]['spell_id']
     return get_characters_by_spell(spell_id)
 
+#works
 @app.route('/spell_count/spell_id/<spell_id>')
 def get_spell_count(spell_id):
     ''' 
@@ -344,13 +354,14 @@ def get_spell_count(spell_id):
     '''
     query = '''SELECT COUNT(*)
                 FROM instances
-                WHERE spell_id = {0}'''.format({0})
+                WHERE spell_id = {0}'''.format(spell_id)
 
     for row in _fetch_all_rows_for_query(query):
         url = flask.url_for('get_spell_by_id', spell_id={0}, _external=True)
         count = row[0]
     return json.dumps(count)
 
+#internal server error (json isn't working, still inputs spell_id as the entire string)
 @app.route('/spell_count/<incantation>')
 def get_spell_count_by_name(incantation):
     ''' 
@@ -358,13 +369,15 @@ def get_spell_count_by_name(incantation):
     Allows the user to input the spell name as a string, then finds the associated
     ID number and calls the get_spell_count method.
     '''
-    spell_id = get_spell_by_name(incantation)
+    spell_string = get_spell_by_name(incantation)
+    spell_dict = json.loads(spell_string)
+    spell_id = spell_dict[0]['spell_id']
     return get_spell_count(spell_id)
 
 
 
 
-
+#internal service error
 @app.route('/books_spell_count/spell_id/<book_id>/<spell_id>')
 def get_spell_count_by_book(spell_id, book_id):
     ''' 
@@ -373,15 +386,16 @@ def get_spell_count_by_book(spell_id, book_id):
     '''
     query = '''SELECT COUNT(*)
                 FROM instances
-                WHERE spell_id = 0
-                AND book_id = 1
-                '''.format(0)
+                WHERE spell_id = {0}
+                AND book_id = {1}
+                '''.format(spell_id)
 
     for row in _fetch_all_rows_for_query(query):
         url = flask.url_for('get_spell_by_id', spell_id=0, _external=True)
         count = row[0]
     return json.dumps(count)
 
+#internal service error
 @app.route('/books_spell_count/<book_name>/<incantation>')
 def get_spell_count_by_book_by_names(incantation, book_name):
     ''' 
@@ -389,10 +403,15 @@ def get_spell_count_by_book_by_names(incantation, book_name):
     Allows the user to input the spell name as a string and the book name as a string, then finds the associated
     ID numbers and calls the get_spell_count_by_book method.
     '''
-    spell_id = get_spell_by_name(incantation)
-    book_id = get_book_id_by_name(book_name)
+    spell_string = get_spell_by_name(incantation)
+    spell_dict = json.loads(spell_string)
+    spell_id = spell_dict[0]['spell_id']
+    book_string = get_book_id_by_name(book_name)
+    book_dict = json.loads(book_string)
+    book_id = book_dict[0]['book_id']
     return get_spell_count_by_book(spell_id, book_id)
 
+#internal service error
 @app.route('/help')
 def help():
     rule_list = []
