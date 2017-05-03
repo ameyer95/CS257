@@ -310,7 +310,7 @@ def get_spells_by_book_name(book_name):
     book_dict = json.loads(book_string)
     print(type(book_dict))
     print(book_dict)
-    book_id = book_dict[0]['book_id']
+    book_id = book_dict['book_id']
     return get_spells_by_book(book_id)
 
 #works
