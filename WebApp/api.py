@@ -381,7 +381,7 @@ def get_spell_count_by_name(incantation):
 
 #internal service error - seems like it does't get through making the query?
 @app.route('/books_spell_count/spell_id/<book_id>/<spell_id>')
-def get_spell_count_by_book(spell_id, book_id):
+def get_spell_count_by_book(book_id, spell_id):
     ''' 
     Returns the number of time a given spell (input as an ID number) was
     used across a given books
