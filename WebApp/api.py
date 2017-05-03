@@ -254,7 +254,7 @@ def get_book_by_id(book_id):
 
     return json.dumps({})
 
-#returns an empty list
+#works - need to type in FULL name with spaces
 @app.route('/books/<book_name>')
 def get_book_id_by_name(book_name):
     ''' 
@@ -308,6 +308,8 @@ def get_spells_by_book_name(book_name):
 
     book_string = get_book_id_by_name(book_name)
     book_dict = json.loads(book_string)
+    print(type(book_dict))
+    print(book_dict)
     book_id = book_dict[0]['book_id']
     return get_spells_by_book(book_id)
 
