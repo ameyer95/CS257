@@ -380,6 +380,7 @@ def get_spell_count_by_name(incantation):
 
 
 #internal service error - seems like it does't get through making the query?
+#believe it is because spell_id is a "s
 @app.route('/books_spell_count/spell_id/<book_id>/<spell_id>')
 def get_spell_count_by_book(book_id, spell_id):
     ''' 
