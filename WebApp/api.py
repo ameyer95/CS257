@@ -386,13 +386,11 @@ def get_spell_count_by_book(spell_id, book_id):
     Returns the number of time a given spell (input as an ID number) was
     used across a given books
     '''
-    print("hi")
-    print("{0}", "{1}")
+   
     query = '''SELECT COUNT(*)
                 FROM instances
                 WHERE spell_id = {0}
-                AND book_id = {1}
-                '''.format(spell_id)
+                AND book_id = {1}'''.format(spell_id)
     print(query)
     print(type(query))
     for row in _fetch_all_rows_for_query(query):
