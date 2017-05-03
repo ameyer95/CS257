@@ -264,7 +264,7 @@ def get_book_id_by_name(book_name):
      this book in the future.
      '''
     query = '''SELECT id, name
-                FROM books WHERE UPPER name LIKE UPPER('%{0}%')'''.format(book_name)
+                FROM books WHERE UPPER(name) LIKE UPPER('%{0}%')'''.format(book_name)
 
     rows = _fetch_all_rows_for_query(query)
     if len(rows) > 0:
