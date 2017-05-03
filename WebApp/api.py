@@ -392,6 +392,7 @@ def get_spell_count_by_book(spell_id, book_id):
                 AND book_id = {1}
                 '''.format(spell_id)
     print(query)
+    print(type(query))
     for row in _fetch_all_rows_for_query(query):
         url = flask.url_for('get_spell_by_id', spell_id={0}, _external=True)
         count = row[0]
