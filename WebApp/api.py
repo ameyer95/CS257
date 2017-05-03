@@ -379,7 +379,7 @@ def get_spell_count_by_name(incantation):
 
 
 
-#internal service error
+#internal service error - seems like it does't get through making the query?
 @app.route('/books_spell_count/spell_id/<book_id>/<spell_id>')
 def get_spell_count_by_book(spell_id, book_id):
     ''' 
@@ -391,6 +391,7 @@ def get_spell_count_by_book(spell_id, book_id):
                 FROM instances
                 WHERE spell_id = {0}
                 AND book_id = {1}'''.format(spell_id)
+    print("hi?")
     print(query)
     print(type(query))
     for row in _fetch_all_rows_for_query(query):
