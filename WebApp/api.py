@@ -389,8 +389,8 @@ def get_spell_count_by_book(book_id, spell_id):
    
     query = '''SELECT COUNT(*)
                 FROM instances
-                WHERE spell_id = {0}
-                AND book_id = {1}'''.format(spell_id)
+                WHERE spell_id = {1}
+                AND book_id = {0}'''
     print("hi?")
     print(query)
     print(type(query))
