@@ -410,7 +410,7 @@ def get_spell_count_by_book_by_names(incantation, book_name):
     book_string = get_book_id_by_name(book_name)
     book_dict = json.loads(book_string)
     book_id = book_dict['book_id']
-    return get_spell_count_by_book(spell_id, book_id)
+    return get_spell_count_by_book(book_id, spell_id)
 
 #internal service error
 @app.route('/help')
