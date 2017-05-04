@@ -20,7 +20,7 @@ class apiTester(unittest.TestCase):
         data_from_api = urllib.urlopen(url).read()
         string_from_server = data_from_api.decode('utf-8')
         spell_list = json.loads(string_from_server)
-        string_from_server.replace(" ","")
+        string_from_server = string_from_server.replace(" ","")
         expected_list = ["accio", "caveinimicum", "expelliarmus", "relashio", "riddikulus", "silencio", "tergeo",
                          "wingardiumleviosa"]
         self.assertEqual(len(spell_list), len(expected_list))
@@ -35,7 +35,7 @@ class apiTester(unittest.TestCase):
         data_from_api = urllib.urlopen(url).read()
         string_from_server = data_from_api.decode('utf-8')
         spell_list = json.loads(string_from_server)
-        string_from_server.replace(" ","")
+        string_from_server = string_from_server.replace(" ","")
         expected_list = ["quietus", "sonorus"]
         self.assertEqual(len(spell_list), len(expected_list))
         for spell in expected_list:
@@ -47,7 +47,7 @@ class apiTester(unittest.TestCase):
         data_from_api = urllib.urlopen(url).read()
         string_from_server = data_from_api.decode('utf-8')
         spell_list = json.loads(string_from_server)
-        string_from_server.replace(" ","")
+        string_from_server = string_from_server.replace(" ","")
         expected_spell = "riddikulus"
         self.assertTrue(expected_spell in string_from_server)
         self.assertTrue(len(spell_list)==1)
@@ -59,7 +59,7 @@ class apiTester(unittest.TestCase):
         data_from_api = urllib.urlopen(url).read()
         string_from_server = data_from_api.decode('utf-8')
         returned_list = json.loads(string_from_server)
-        string_from_server.replace(" ", "")
+        string_from_server = string_from_server.replace(" ", "")
         expected_list = ["avadakedavra", "caveinimicum", "confringo", "confundus", "crucio", "deprimo", "diffindo", "duro",
                          "engorgio", "erecto", "expectopatronum", "expelliarmus", "expulso", "fidelius","geminio", "glisseo",
                          "homenumrevelio", "impedimienta", "imperio", "impervius", "levicorpus", "liberacorpus", "lumos",
@@ -77,7 +77,7 @@ class apiTester(unittest.TestCase):
         data_from_api = urllib.urlopen(url).read()
         string_from_server = data_from_api.decode('utf-8')
         returned_list = json.loads(string_from_server)
-        string_from_server.replace(" ", "")
+        string_from_server = string_from_server.replace(" ", "")
         expected_list = ["expelliarmus", "aparecium", "eatslugs", "homorphus", "lumos", "obliviate", "peskipiksipesternomi"
                          "rictusempra", "serpensortia", "tarantallegra"]
         assertEqual(len(expected_list), len(returned_list))
