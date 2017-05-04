@@ -1,3 +1,5 @@
+Document edited 5/3/17 to reflect changes.
+
 DATA TABLES
 
 CREATE TABLE types_of_spells (
@@ -6,7 +8,7 @@ CREATE TABLE types_of_spells (
     PRIMARY KEY(id)
 );
     
-CREATE TABLE HP_books (
+CREATE TABLE books (
     id SERIAL
     name TEXT
     PRIMARY KEY(id)
@@ -21,7 +23,7 @@ CREATE TABLE characters (
     
 CREATE TABLE spells (
     id SERIAL
-    incantation TEXT
+    incantantation TEXT
     type_id INT
     purpose TEXT
     PRIMARY KEY(id)
@@ -37,37 +39,110 @@ CREATE TABLE instances (
 
 API QUERIES
 
+SYNOPSIS: Get all characters
+QUERY (GET): /characters
+RESPONSE: A list of all characters. Specifically, a list of dictionaries containing the character_id, url, first_name, and last_name.
+
+SYNOPSIS: Get all spells
+QUERY (GET) /spells
+RESPONSE: A list of dictionaries where each dictionary contains the id, incantation, and purpose pertaining to a particular spell, such that every spell is in the list.
+
+SYNOPSIS: Get all books
+QUERY (GET) /books
+RESPONSE: A list of all books, where each book is a dictionary that contains the title, id, and url pertaining to that book.
+
+SYNOPSIS: Get information about a particular character
+QUERY (GET): /characters/<character_name>
+RESPONSE: A list of dictionaries containing the character_id, url, first_name, and last_name for all characters who match the input.
+EXAMPLE: /characters/Ludo_Bagman
+	[{“character_id”:33,”url”:”/characters/char_id/33”,”first_name”:”Ludo”,”last_name”:”Bagman”}]
+
 SYNOPSIS: Input a character's name and get a list of all the spells they used.
-QUERY (GET): /characters/instances/spells/<character_name>/
-RESPONSE: A list of spells that <character_name> used
-EXAMPLE: http://standardbookofspells.com/characters/instances/spells/Ron_Weasley/
-[Alohomora, Accio]
+QUERY (GET): /spells_by_character/<character_name>
+RESPONSE: A list of all spells a character uses. Each spell is listed in a dictionary that contains a url, the incantation, the purpose, the type id, and the spell id.
+EXAMPLE: /spells_by_character/Parvati_Patil
+[{“url”:”/spells/spell_id/79”, ”incantation”:”Riddikulus”, ”purpose”: ”use this spell and laugh to defeat a boggart”, ”type_id”:2, “spell_id”:79}]
 
-SYNOPSIS: Input a book number and recieve a list of all the spells used in that book.
-QUERY (GET): /instances/<book_num>/
-RESPONSE: A list of spells used in book number <book_num>.
-EXAMPLE: http://standardbookofspells.com/instances/7
-[Avada Kedavra, Accio, Expelliarmus, Sectumsempra, Protego]
+SYNOPSIS: Input a spell ID and get information about that spell.
+QUERY(GET): /spells/spell_id/<spell_id>
+RESPONSE: A dictionary containing that spell’s effect, url, type id, spell id, and name.
+EXAMPLE: /spells/spell_id/7
+	{“spell_effect”:”Turns small objects into bird”, “url”: “/spells/spell_id/7”, “type_id”:1, “spell_id”:7, “spell_name”:”Avifors”}
 
-SYNOPSIS: Input a spell name and learn what it does.
-QUERY (GET): /spells/<spell_name>/
-RESPONSE: A dictionary where the first key is type of spel and the second key is purpose of the spell.
-EXAMPLE: http://standardbookofspells.com/spells/flagrate/
-{'type':'Spell','purpose':'Allows user to write on objects'}
+SYNOPSIS: Input a spell name and get information about that spell (or possibly multiple spells).
+QUERY(GET): /spells/<spell_name>
+RESPONSE: A list of spells, where each spell is represented as a dictionary containing that spell’s effect, url, type id, spell id, and name.
+EXAMPLE: /spells/avifors
+	[{“spell_effect”:”Turns small objects into bird”, “url”: “/spells/spell_id/7”, “type_id”:1, “spell_id”:7, “spell_name”:”Avifors”}]
 
-SYNOPSIS: Learn how many times a spell is used
-QUERY (GET): /spells/instances/<spell_name>/
-RESPONSE: An integer value corresponding to the number of times <spell_name> was cast in all Harry Potter books.
-EXAMPLE: http://standardbookofspells.com/spells/instances/<impedimenta>/
+SYNOPSIS: Input a book ID number and get information about that book.
+QUERY(GET): /books/book_id/<book_id>
+RESPONSE: A dictionary containing url, book_id, book_name
+EXAMPLE: /books/book_id/1
+	{“url”:”books/book_id/1”, “book_id”:1, “book_name”:”Harry Potter and the Sorcerer’s Stone”}
 
-SYNOPSIS: Learn how many times a given spell is used in a given book.
-QUERY (GET): /spells/instances/<spell_name>/<book_num>/
-RESPONSE: An integer value corresponding to the number of times <spell_name> was cast in book number <book_num>.
-EXAMPLE: http://standardbookofspells.com/spells/instances/Lumos/4/
-4
+SYNOPSIS: Input a book name and get information about that book.
+QUERY (GET): /books/<book_name>
+RESPONSE: A dictionary containing url, book_id, book_name
+EXAMPLE: /books/book_id/Harry_Potter_and_the_Sorcerers_Stone
+	{“url”:”books/book_id/1”, “book_id”:1, “book_name”:”Harry Potter and the Sorcerer’s Stone”}
+
+SYNOPSIS: Input a book number and receive a list of all the spells used in that book.
+QUERY (GET): /books_spells/book_id/<book_id>
+RESPONSE: A list of spells used in book number <book_id>, where each spell is represented as a dictionary containing url, incantation, purpose, type_id, spell_id.
+EXAMPLE: http://standardbookofspells.com/books_spells/book_id/7
+
+SYNOPSIS: Input a book name and receive a list of all the spells used in that book.
+QUERY (GET): /books_spells/<book_id>
+RESPONSE: A list of spells used in the specified book, where each spell is represented as a dictionary containing url, incantation, purpose, type_id, spell_id.
+EXAMPLE: http://standardbookofspells.com/books_spells/book_id/Harry_Potter_and_the_Deathly_Hallows
 
 SYNOPSIS: Learn which characters use a given spell.
-QUERY (GET): /spells/instances/characters/<spell_name>/
-RESPONSE: A list of characters who use that spell.
-EXAMPLE: http://standardbookofspells.com/spells/instances/characters/Accio/
-[Harry Potter, Molly Weasley, Fred Weasley, George Weasley, Sirius Black, Bellatrix Lestrange, Ron Weasley, Hermione Granger, Filius Flitwick]
+QUERY (GET): /characters_by_spell/spell_id/<spell_id>/
+RESPONSE: A list of characters who use that spell, where each character is represented as a dictionary containing character ID, character url, first name, and last name.
+EXAMPLE: /characters_by_spell/spell_id/8
+[{“character_id”:2,”url”:”/characters/char_id/2”, “first_name”:”Hermione”, “last_name”:”Granger”}]
+
+SYNOPSIS: Learn which characters use a given spell.
+QUERY (GET): /characters_by_spell/<incantation>
+RESPONSE: A list of characters who use that spell, where each character is represented as a dictionary containing character ID, character url, first name, and last name.
+EXAMPLE: /characters_by_spell/avis
+[{“character_id”:2,”url”:”/characters/char_id/2”, “first_name”:”Hermione”, “last_name”:”Granger”}]
+
+SYNOPSIS: Input a character's ID number and get a list of all the spells they used.
+QUERY (GET): /spells_by_character/char_id/<character_id>
+RESPONSE: A list of all spells a character uses. Each spell is listed in a dictionary that contains a url, the incantation, the purpose, the type id, and the spell id.
+EXAMPLE: /spells_by_character/char_id/37
+[{“url”:”/spells/spell_id/86”, ”incantation”:”Specialis Revelio”, ”purpose”: ”Reveals hidden secrets or magical properties”, ”type_id”:2, “spell_id”:86}]
+
+SYNOPSIS: Input a character's name number and get a list of all the spells they used.
+QUERY (GET): /spells_by_character/char_id/<character_id>
+RESPONSE: A list of all spells a character uses. Each spell is listed in a dictionary that contains a url, the incantation, the purpose, the type id, and the spell id.
+EXAMPLE: /spells_by_character/char_id/Ernie_Macmillan
+[{“url”:”/spells/spell_id/86”, ”incantation”:”Specialis Revelio”, ”purpose”: ”Reveals hidden secrets or magical properties”, ”type_id”:2, “spell_id”:86}]
+
+SYNOPSIS: Learn how many times a spell is used
+QUERY (GET): /spell_count/spell_id/<spell_id>/
+RESPONSE: An integer value corresponding to the number of times <spell_id> was cast in all Harry Potter books.
+EXAMPLE: http://standardbookofspells.com/spell_count/spell_id/1
+34
+
+SYNOPSIS: Learn how many times a spell is used
+QUERY (GET): /spell_count/<incantation>/
+RESPONSE: An integer value corresponding to the number of times <spell_id> was cast in all Harry Potter books.
+EXAMPLE: http://standardbookofspells.com/spell_count/accio
+34
+
+SYNOPSIS: Learn how many times a given spell is used in a given book.
+QUERY (GET): /books_spell_count/spell_id/<book_id>/<spell_id>/
+RESPONSE: An integer value corresponding to the number of times <spell_id> was cast in book number <book_id>.
+EXAMPLE: http://standardbookofspells.com/spells/instances/53/4/
+4
+
+SYNOPSIS: Learn how many times a given spell is used in a given book.
+QUERY (GET): /books_spell_count/<book_name>/<incantation>/
+RESPONSE: An integer value corresponding to the number of times <spell_id> was cast in book number <book_id>.
+EXAMPLE: http://standardbookofspells.com/spells/instances/lumos/Harry_Potter_and_the_Goblet_of_Fire/
+4
+
+
