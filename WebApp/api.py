@@ -110,7 +110,8 @@ def get_character(character_name):
                 FROM characters
                 WHERE UPPER(last_name) LIKE UPPER('%{0}%')
                 or UPPER(first_name) LIKE UPPER('%{0}%')
-                or UPPER(first_name || ' ' || last_name) LIKE UPPER('%{0}%')
+                or UPPER(REPLACE(first_name || last_name,' ', '')) LIKE UPPER(REPLACE('%{0}%',' ',''))
+                or UPPER(REPLACE(first_name || last_name,' ', '')) LIKE UPPER(REPLACE('%{0}%','_',''))
                 ORDER BY last_name, first_name'''.format(character_name)
 
     character_list = []
@@ -178,7 +179,8 @@ def get_spell_by_name(spell_name):
     '''
     query = '''SELECT id, incantantation, type_id, purpose 
                 FROM spells
-                WHERE UPPER(incantantation) LIKE UPPER('%{0}%')
+                WHERE UPPER(REPLACE(incantantation,' ','')) LIKE UPPER(REPLACE('%{0}%',' ',''))
+                or UPPER(REPLACE(incantantation,' ','')) LIKE UPPER(REPLACE('%{0}%','_',''))
                 ORDER BY incantantation'''.format(spell_name)
 
     spell_list = []
@@ -219,6 +221,7 @@ def get_spells_by_character_name(character_name):
     Allows the user to input the character's name as a string, then 
     finds the associated ID and calls get_spells_by_character
     '''
+    character_name = character_name.replace("_","")
     character_string = get_character(character_name)
     character_dict = json.loads(character_string)
     if len(character_dict) > 0:
@@ -256,7 +259,8 @@ def get_book_id_by_name(book_name):
      this book in the future.
      '''
     query = '''SELECT id, name
-                FROM books WHERE UPPER(name) LIKE UPPER('%{0}%')'''.format(book_name)
+                FROM books WHERE UPPER(REPLACE(name,' ','')) LIKE UPPER(REPLACE('%{0}%',' ',''))
+                or UPPER(REPLACE(name,' ','')) LIKE UPPER(REPLACE('%{0}%','_',''))'''.format(book_name)
 
     rows = _fetch_all_rows_for_query(query)
     if len(rows) > 0:
@@ -295,7 +299,8 @@ def get_spells_by_book_name(book_name):
     Allows the user to input the book name (as a string), then converts
     that string to the book ID and calls the get_spells_by_book method
     '''
-
+    
+    book_name = book_name.replace("_","")
     book_string = get_book_id_by_name(book_name)
     book_dict = json.loads(book_string)
     if len(book_dict) > 0:
@@ -330,6 +335,7 @@ def get_characters_by_spell_name(incantation):
     Returns a list of all the characters who used a given spell. 
     Allows the user to input the spell name as a string, then finds the associated ID and
     calls get_characters_by_spell using that ID'''
+    incantation = incantation.replace("_","")
     spell_string = get_spell_by_name(incantation)
     spell_dict = json.loads(spell_string)
     if len(spell_dict) > 0:
@@ -360,6 +366,7 @@ def get_spell_count_by_name(incantation):
     Allows the user to input the spell name as a string, then finds the associated
     ID number and calls the get_spell_count method.
     '''
+    incantation = incantation.replace("_","")
     spell_string = get_spell_by_name(incantation)
     spell_dict = json.loads(spell_string)
     if len(spell_dict) > 0:
@@ -391,8 +398,10 @@ def get_spell_count_by_book_by_names(incantation, book_name):
     Allows the user to input the spell name as a string and the book name as a string, then finds the associated
     ID numbers and calls the get_spell_count_by_book method.
     '''
+    incantation = incantation.replace("_","")
     spell_string = get_spell_by_name(incantation)
     spell_dict = json.loads(spell_string)
+    book_name = book_name.replace("_","")
     book_string = get_book_id_by_name(book_name)
     book_dict = json.loads(book_string)
     if len(spell_dict) > 0:
