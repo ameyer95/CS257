@@ -50,7 +50,6 @@ def set_headers(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
-#works
 @app.route('/characters')
 def get_all_characters():
     '''
@@ -66,7 +65,6 @@ def get_all_characters():
         character_list.append(character)
     return json.dumps(character_list)
 
-#works
 @app.route('/spells')
 def get_all_spells():
     '''
@@ -84,7 +82,6 @@ def get_all_spells():
         spell_list.append(spell)
     return json.dumps(spell_list)
 
-#works
 @app.route('/books')
 def get_all_books():
     '''
@@ -100,7 +97,6 @@ def get_all_books():
         book_list.append(book)
     return json.dumps(book_list)
 
-#works
 @app.route('/characters/<character_name>')
 def get_character(character_name):
     ''' 
@@ -126,7 +122,6 @@ def get_character(character_name):
 
     return json.dumps(character_list)
 
-#works
 @app.route('/characters/char_id/<character_id>')
 def get_character_by_id(character_id):
     ''' 
@@ -195,8 +190,7 @@ def get_spell_by_name(spell_name):
 
     return json.dumps(spell_list)
 
-#works
-@app.route('/characters_spells/char_id/<character_id>')
+@app.route('/spells_by_character/char_id/<character_id>')
 def get_spells_by_character(character_id):
     ''' 
     Returns a list of all the spells that a given 
@@ -218,7 +212,7 @@ def get_spells_by_character(character_id):
 
     return json.dumps(spell_list)
 
-@app.route('/characters_spells/<character_name>')
+@app.route('/spells_by_character/<character_name>')
 def get_spells_by_character_name(character_name):
     '''
     Returns a list of all the spells that a given character used.
@@ -227,13 +221,12 @@ def get_spells_by_character_name(character_name):
     '''
     character_string = get_character(character_name)
     character_dict = json.loads(character_string)
-    print(character_dict) #this is what we want it to be
-    print(character_dict[0]) #this is what we want it to be
-    print(character_dict[0]['character_id']) #this doesn't print at all
-    idNum = character_dict[0]['character_id']
-    return get_spells_by_character(idNum)
+    if len(character_dict) > 0:
+        idNum = character_dict[0]['character_id']
+        return get_spells_by_character(idNum)
+    else:
+        return get_spells_by_character(0)
 
-#works
 @app.route('/books/book_id/<book_id>')
 def get_book_by_id(book_id):
     ''' 
@@ -254,7 +247,6 @@ def get_book_by_id(book_id):
 
     return json.dumps({})
 
-#works - need to type in FULL name with spaces
 @app.route('/books/<book_name>')
 def get_book_id_by_name(book_name):
     ''' 
@@ -275,7 +267,6 @@ def get_book_id_by_name(book_name):
 
     return json.dumps({})
 
-#works
 @app.route('/books_spells/book_id/<book_id>')
 def get_spells_by_book(book_id):
     ''' 
@@ -297,7 +288,6 @@ def get_spells_by_book(book_id):
 
     return json.dumps(spell_list)
 
-#works
 @app.route('/books_spells/<book_name>')
 def get_spells_by_book_name(book_name):
     '''
@@ -308,13 +298,12 @@ def get_spells_by_book_name(book_name):
 
     book_string = get_book_id_by_name(book_name)
     book_dict = json.loads(book_string)
-    print(type(book_dict))
-    print(book_dict)
-    book_id = book_dict['book_id']
-    return get_spells_by_book(book_id)
+    if len(book_dict) > 0:
+        book_id = book_dict['book_id']
+        return get_spells_by_book(book_id)
+    return get_spells_by_book(0)
 
-#works
-@app.route('/characters_spell/spell_id/<spell_id>')
+@app.route('/characters_by_spell/spell_id/<spell_id>')
 def get_characters_by_spell(spell_id):
     '''
     Returns a list of all characters who used the given spell.
@@ -335,8 +324,7 @@ def get_characters_by_spell(spell_id):
 
     return json.dumps(character_list)
 
-#works
-@app.route('/characters_spell/<incantation>')
+@app.route('/characters_by_spell/<incantation>')
 def get_characters_by_spell_name(incantation):
     ''' 
     Returns a list of all the characters who used a given spell. 
@@ -344,10 +332,12 @@ def get_characters_by_spell_name(incantation):
     calls get_characters_by_spell using that ID'''
     spell_string = get_spell_by_name(incantation)
     spell_dict = json.loads(spell_string)
-    spell_id = spell_dict[0]['spell_id']
-    return get_characters_by_spell(spell_id)
+    if len(spell_dict) > 0:
+        spell_id = spell_dict[0]['spell_id']
+        return get_characters_by_spell(spell_id)
+    else:
+        return get_characters_by_spell(0)
 
-#works
 @app.route('/spell_count/spell_id/<spell_id>')
 def get_spell_count(spell_id):
     ''' 
@@ -363,7 +353,6 @@ def get_spell_count(spell_id):
         count = row[0]
     return json.dumps(count)
 
-#works
 @app.route('/spell_count/<incantation>')
 def get_spell_count_by_name(incantation):
     ''' 
@@ -373,13 +362,12 @@ def get_spell_count_by_name(incantation):
     '''
     spell_string = get_spell_by_name(incantation)
     spell_dict = json.loads(spell_string)
-    spell_id = spell_dict[0]['spell_id']
-    return get_spell_count(spell_id)
+    if len(spell_dict) > 0:
+        spell_id = spell_dict[0]['spell_id']
+        return get_spell_count(spell_id)
+    else:
+        return get_spell_count(0)
 
-
-
-
-#works
 @app.route('/books_spell_count/spell_id/<book_id>/<spell_id>')
 def get_spell_count_by_book(book_id, spell_id):
     ''' 
@@ -396,7 +384,6 @@ def get_spell_count_by_book(book_id, spell_id):
         count = row[0]
     return json.dumps(count)
 
-#internal service error
 @app.route('/books_spell_count/<book_name>/<incantation>')
 def get_spell_count_by_book_by_names(incantation, book_name):
     ''' 
@@ -404,22 +391,24 @@ def get_spell_count_by_book_by_names(incantation, book_name):
     Allows the user to input the spell name as a string and the book name as a string, then finds the associated
     ID numbers and calls the get_spell_count_by_book method.
     '''
-    spell_string = get_spell_by_name(incantation)[0]
+    spell_string = get_spell_by_name(incantation)
     spell_dict = json.loads(spell_string)
-    spell_id = spell_dict['spell_id']
     book_string = get_book_id_by_name(book_name)
     book_dict = json.loads(book_string)
-    book_id = book_dict['book_id']
-    return get_spell_count_by_book(book_id, spell_id)
+    if len(spell_dict) > 0:
+        spell_id = spell_dict[0]['spell_id']
+        if len(book_dict) > 0:
+            book_id = book_dict['book_id']
+            return get_spell_count_by_book(book_id, spell_id)
+    return get_spell_count_by_book(0,0)
 
-#internal service error
 @app.route('/help')
 def help():
     rule_list = []
     for rule in app.url_map.iter_rules():
         rule_text = rule.rule.replace('<', '&lt;').replace('>','&gt;')
         rule_list.append(rule_text)
-    return json.dump(rule_list)
+    return json.dumps(rule_list)
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
