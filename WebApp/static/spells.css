@@ -1,0 +1,17 @@
+/*
+    spells.css
+    Patty Commins and Anna Meyer, 7 May 2016
+    Styles for the "Harry Potter Spells" webapp 
+    for CS 257, Spring 2017. 
+*/
+
+@import url('page-setup-styles.css');
+
+table {
+    border-collapse: collapse;
+}
+
+th, td {
+    border-bottom: 1px solid #ddd;
+    padding: 15px;
+}
