@@ -51,9 +51,6 @@ function getSpell(spellID, spellName) {
                && xmlHttpRequest2.readyState == 4 && xmlHttpRequest2.status == 200) { 
                 getCharactersForSpellCallback(spellName, xmlHttpRequest1.responseText, xmlHttpRequest2.responseText);
             }
-            else {
-                console.log("there's a problem");
-            }
         }; 
 
     xmlHttpRequest.send(null);
@@ -95,11 +92,9 @@ function charactersCallback(responseText) {
         tableBody += '<tr>';
 
         tableBody += '<td><a onclick="getCharacter(' + characterList[k]['character_id'] + ",'"
-                            + characterList[k]['first_name'] + characterList[k][last_name] + "')\">"
-                            + characterList[k]['first_name'] + '</a></td>';
-                
-        tableBody += '<td>' + characterList[k]['last_name'] + '<\td>';
-
+                            + characterList[k]['first_name'] + ",'" + characterList[k]["last_name"] + "')\">"
+                            + characterList[k]['first_name'] + ' ' + characterList[k]['last_name'] + '</a></td>';
+        
         tableBody += '</tr>';
     }
     
@@ -112,7 +107,7 @@ function getCharacter(characterID, characterFirstName, characterLastName) {
     xmlHttpRequest = new XMLHttpRequest();
     xmlHttpRequest.open('get', url);
 
-    xmlHttpRequest1.onreadystatechange = function() {
+    xmlHttpRequest.onreadystatechange = function() {
             if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) { 
                 getSpellsForCharacterCallback(characterFirstName, characterLastName, xmlHttpRequest.responseText);
             } 
@@ -170,7 +165,7 @@ function getBook(bookID, title) {
     xmlHttpRequest = new XMLHttpRequest();
     xmlHttpRequest.open('get', url);
 
-    xmlHttpRequest1.onreadystatechange = function() {
+    xmlHttpRequest.onreadystatechange = function() {
             if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) { 
                 getSpellsForBookCallback(title, xmlHttpRequest.responseText);
             } 
