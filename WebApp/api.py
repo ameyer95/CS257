@@ -210,7 +210,8 @@ def get_spells_by_character(character_id):
         url = flask.url_for('get_spell_by_id', spell_id = row[0], _external = True)
         spell = {'spell_id':row[0], 'incantation':row[1], 'type_id':row[2], 'purpose':row[3],
                  'url':url}
-        spell_list.append(spell)
+        if spell not in spell_list:
+            spell_list.append(spell)
 
     return json.dumps(spell_list)
 
@@ -288,7 +289,8 @@ def get_spells_by_book(book_id):
         url = flask.url_for('get_spell_by_id', spell_id=row[0], _external=True)
         spell = {'spell_id': row[0], 'incantation': row[1], 'type_id': row[2], 'purpose': row[3],
                  'url': url}
-        spell_list.append(spell)
+        if spell not in spell_list:
+            spell_list.append(spell)
 
     return json.dumps(spell_list)
 

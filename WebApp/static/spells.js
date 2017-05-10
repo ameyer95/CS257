@@ -39,27 +39,37 @@ function spellsCallback(responseText) {
 }
 
 function getSpell(spellID, spellName) {
-    var urlChars = api_base_url + 'characters_by_spell/spell_id/' + spellID;
-    var urlSpell = api_base_url + 'spells/spell_id/' + spellID;
-    xmlHttpRequest1 = new XMLHttpRequest();
-    xmlHttpRequest1.open('get', urlChars);
-    xmlHttpRequest2 = new XMLHttpRequest();
-    xmlHttpRequest2.open('get',urlSpell);
+    var url = api_base_url + 'characters_by_spell/spell_id/' + spellID;
+    xmlHttpRequest = new XMLHttpRequest();
+    xmlHttpRequest.open('get', url);
 
-    xmlHttpRequest1.onreadystatechange = function() {
-            if (xmlHttpRequest1.readyState == 4 && xmlHttpRequest1.status == 200
-               && xmlHttpRequest2.readyState == 4 && xmlHttpRequest2.status == 200) { 
-                getCharactersForSpellCallback(spellName, xmlHttpRequest1.responseText, xmlHttpRequest2.responseText);
-            }
-        }; 
+    xmlHttpRequest.onreadystatechange = function() {
+        if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) { 
+            getCharactersForSpellCallback(spellID, spellName, xmlHttpRequest.responseText);
+        }
+    }; 
 
     xmlHttpRequest.send(null);
 }
 
-function getCharactersForSpellCallback(spellName, responseTextChar, responseTextSpell) {
-    var characterList = JSON.parse(responseTextChar);
-    var spellInfo = JSON.parse(responseTextSpell);
-    var tableBody = '<tr><th>' + spellName + ': ' + spellInfo["spell_effect"] + '</th></tr>';
+function getCharactersForSpellCallback(spellID, spellName, responseText){
+    var characterList = JSON.parse(reponseText);
+    var url = api_base_url + 'spells/spell_id/' + spellID;
+    xmlHttpRequest = new XMLHttpRequest();
+    xmlHttpRequest.open('get',url);
+    
+    xmlHttpRequest.onreadystatefunction = function() {
+        if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
+            getCharactersForSpellCallback2(xmlHttpRequest.responseText, characterList);
+        }
+    };
+    
+    xmlHttpRequest.send(null);
+}
+
+function getCharactersForSpellCallback2(responseText, characterList) {
+    var spellInfo = JSON.parse(responseText);
+    var tableBody = '<tr><th>' + spellInfo['spell_name'] + ': ' + spellInfo['spell_effect'] + '</th></tr>';
     for (var k = 0; k < characterList.length; k++) {
         tableBody += '<tr>';
         tableBody += '<td>' + characterList[k]['first_name'] + '</td>';
@@ -191,13 +201,15 @@ function onSearchButton() {
     // check characters_by_spell/magicword
     // if empty, check spells_by_character/magicword
     // if empty, check books_spells/magicword
-    var url = api_base_url + 'characters_by_spell/' + 'magicword';
+    var magicword = document.getElementById('magicword').value;
+    var url = api_base_url + 'characters_by_spell/' + magicword;
     xmlHttpRequest = new XMLHttpRequest();
     xmlHttpRequest.open('get', url);
 
+    
     xmlHttpRequest.onreadystatechange = function() {
         if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) { 
-            spellsSearchCallback(xmlHttpRequest.responseText);
+            spellsSearchCallback(xmlHttpRequest.responseText, magicword);
         } 
     };
     
@@ -205,73 +217,109 @@ function onSearchButton() {
 }
 
 
-function spellsSearchCallback(responseText) {
-    var spellsResults = JSON.parse(responseText);
-    var tableBody = '';
-    if (spellsResults.length > 0) {
-        for (var k = 0; k < spellsResults.length; k++) {
-            tableBody += '<tr>';
-
-            tableBody += '<td><a onclick="getSpell(' + spellsList[k]['spell_id'] + ",'"
-                                + spellsList[k]['spell_name'] + "')\">"
-                                + spellsList[k]['spell_name'] + '</a></td>';
-
-            tableBody += '</tr>';
-        }
-
-        var resultsTableElement = document.getElementById('results_table_spells');
-        resultsTableElement.innerHTML = tableBody;
+function spellsSearchCallback(responseText, magicword) {
+    var charResults = JSON.parse(responseText);
+    if (charResults.length > 0) {
+        var url = api_base_url + 'spells/' + magicword;
+        xmlHttpRequest = new XMLHttpRequest();
+        xmlHttpRequest.open('get',url);
+        xmlHttpRequest.onreadystatefunction = function() {
+            document.write(xmlHttpRequest.readyState + ' and status is ' + xmlHttpRequest.status);
+            if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
+                spellsSearchCallback2(xmlHttpRequest.responseText, charResults, magicword);
+            }
+        };
+        
+        xmlHttpRequest.send(null);
     }
     
-    else if (spellsResults.length == 0) {
-        var url = api_base_url + 'spells_by_character/' + 'magicword';
+    else if (charResults.length == 0) {
+        var url = api_base_url + 'characters/' + magicword;
         xmlHttpRequest = new XMLHttpRequest();
         xmlHttpRequest.open('get',url);
         
         xmlHttpRequest.onreadystatechange = function() {
             if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
-                charactersSearchCallback(xmlHttpRequest.responseText)
+                charactersSearchCallback(xmlHttpRequest.responseText, magicword);
             }
-        }
-    }
-}
-
-function charactersSearchCallback(responseText) {
-    var characterResults = JSON.parse(responseText);
-    var tableBody = '';
-    if (characterResults.length > 0) {
-        for (var k = 0; k < characterResults.length; k++) {
-            tableBody += '<tr>';
-
-            tableBody += '<td><a onclick="getCharacter(' + characterResults[k]['char_id'] + ",'"
-                                + characterResults[k]['first_name'] + characterResults[k]['last_name'] + "')\">"
-                                + characterResults[k]['first_name'] + ' ' +characterResults[k]['last_name'] + '</a></td>';
-
-            tableBody += '</tr>';
-        }
-
-        var resultsTableElement = document.getElementById('searchResults');
-        resultsTableElement.innerHTML = tableBody;
-    }
-    
-    else if (characterResults.length == 0) {
-        var url = api_base_url + 'books_spells/' + 'magicword';
-        xmlHttpRequest = new XMLHttpRequest();
-        xmlHttpRequest.open('get',url);
+        };
         
-        xmlHttpRequest.onreadystatechange = function() {
-            if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
-                booksSearchCallback(xmlHttpRequest.responseText)
-            }
-        }
+        xmlHttpRequest.send(null);
     }
 }
 
-function booksSearchCallback(responseText) {
+function spellsSearchCallback2(responseText, charResults, magicword) {
     var spellResults = JSON.parse(responseText);
+    var tableBody = '<tr><th>' + spellResults['spell_name'] + ': ' + spellResults['spell_effect'] + '</th></tr>';
+    for (var k = 0; k < charResults.length; k++) {
+        tableBody += '<tr>';
+
+        tableBody += '<td><a onclick="getCharacter(' + charResults[k]['char_id'] + ",'"
+                            + charResults[k]['first_name'] + charResults[k]['last_name'] + "')\">"
+                            + charResults[k]['first_name'] + ' ' + charResults[k]['last_name'] + '</a></td>';
+
+        tableBody += '</tr>';
+    }
+
+    var searchResults = document.getElementById('searchResults');
+    searchResults.innerHTML = tableBody;
+}
+
+function charactersSearchCallback(responseText, magicword) {
+    var charResults = JSON.parse(responseText);
     var tableBody = '';
 
-    for (var k = 0; k < bookResults.length; k++) {
+    //ideally we'll be able to click on a character and get a list of the spells they used
+    if (charResults.length > 0) {
+        for (var k = 0; k < charResults.length; k++) {
+            tableBody += '<tr>';
+
+            tableBody += '<td><a onclick="getCharacter(' + charResults[k]['character_id'] + ",'"
+                                + charResults[k]['first_name'] + charResults[k]['last_name'] + "')\">"
+                                + charResults[k]['first_name'] + ' ' + charResults[k]['last_name'] + '</a></td>';
+
+            tableBody += '</tr>';
+        }
+
+        var searchResults = document.getElementById('searchResults');
+        searchResults.innerHTML = tableBody;
+    }
+    
+    else if (charResults.length == 0) {
+        var url = api_base_url + 'books_spells/' + magicword;
+        xmlHttpRequest = new XMLHttpRequest();
+        xmlHttpRequest.open('get',url);
+        
+        xmlHttpRequest.onreadystatechange = function() {
+            if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
+                booksSearchCallback(xmlHttpRequest.responseText, magicword);
+            }
+        };
+        
+        xmlHttpRequest.send(null);
+    }
+}
+
+function booksSearchCallback(responseText, magicword) {
+    var spellResults = JSON.parse(responseText);
+    var url = api_base_url + 'books/' + magicword;
+    xmlHttpRequest = new XMLHttpRequest();
+    xmlHttpRequest.open('get',url);
+        
+    xmlHttpRequest.onreadystatefunction = function() {
+        if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
+            booksSearchCallback2(xmlHttpRequest.responseText, spellResults, magicword);
+        }
+    };
+    
+    xmlHttpRequest.send(null);
+}
+
+function booksSearchCallback2(responseText, spellResults, magicword) {
+    var bookResult = JSON.parse(responseText);
+    var tableBody = '<tr><th>' + bookResult['book_name'] + '</th></tr>';
+
+    for (var k = 0; k < spellResults.length; k++) {
         tableBody += '<tr>';
 
         tableBody += '<td><a onclick="getSpell(' + spellResults[k]['spell_id'] + ",'"
@@ -281,8 +329,8 @@ function booksSearchCallback(responseText) {
         tableBody += '</tr>';
     }
 
-    var resultsTableElement = document.getElementById('searchResults');
-    resultsTableElement.innerHTML = tableBody;
+    var searchResults = document.getElementById('searchResults');
+    searchResults.innerHTML = tableBody;
 
 }
 
