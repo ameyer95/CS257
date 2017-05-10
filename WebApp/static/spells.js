@@ -248,7 +248,8 @@ function spellsSearchCallback(responseText, magicword) {
 
 function spellsSearchCallback2(responseText, charResults, magicword) {
     var spellResults = JSON.parse(responseText);
-    var tableBody = '<tr><th>' + spellResults['spell_name'] + ': ' + spellResults['spell_effect'] + '</th></tr>';
+    document.write(spellResults);
+    var tableBody = '<tr><th>' + spellResults[0]['spell_name'] + ': ' + spellResults[0]['spell_effect'] + '</th></tr>';
     for (var k = 0; k < charResults.length; k++) {
         tableBody += '<tr>';
 
@@ -267,13 +268,12 @@ function charactersSearchCallback(responseText, magicword) {
     var charResults = JSON.parse(responseText);
     var tableBody = '';
 
-    //ideally we'll be able to click on a character and get a list of the spells they used
     if (charResults.length > 0) {
         for (var k = 0; k < charResults.length; k++) {
             tableBody += '<tr>';
 
             tableBody += '<td><a onclick="getCharacter(' + charResults[k]['character_id'] + ",'"
-                                + charResults[k]['first_name'] + charResults[k]['last_name'] + "')\">"
+                                + charResults[k]['first_name'] + ",'" + charResults[k]['last_name'] + "')\">"
                                 + charResults[k]['first_name'] + ' ' + charResults[k]['last_name'] + '</a></td>';
 
             tableBody += '</tr>';
@@ -322,7 +322,8 @@ function booksSearchCallback2(responseText, spellResults, magicword) {
 
         tableBody += '<td><a onclick="getSpell(' + spellResults[k]['spell_id'] + ",'"
                             + spellResults[k]['incantation'] + "')\">"
-                            + spellResults[k]['incantation'] + ' ' + spellResults[k]['purpose'] + '</a></td>';
+                            + spellResults[k]['incantation'] + '</a></td>';
+        tableBody += '<td>' spellResults[k]['purpose'] '</td>';
 
         tableBody += '</tr>';
     }
