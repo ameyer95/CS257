@@ -32,7 +32,8 @@ https://github.com/ondich/cs257_2017/blob/master/books/static/jeff-course-styles
   width: 100%;
   margin: 0px;
   padding: 8px;
-  background: #DDDDDD;
+  background: #2929a3;
+  color: #ffffff;
 }
 
 #course_resources {
