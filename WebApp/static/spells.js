@@ -7,8 +7,6 @@
  *  Spring Term 2017.
  */
 
-//line 291 char_id--> char_id
-//fixed reponse--> response in one function call
 
 function onSpellsButton() {
     var url = api_base_url + 'spells';
@@ -30,8 +28,7 @@ function spellsCallback(responseText) {
     for (var k = 0; k < spellsList.length; k++) {
         tableBody += '<tr>';
 
-        tableBody += '<td><a onclick="getSpell(' + spellsList[k]['spell_id'] + ",'"
-                            + spellsList[k]['spell_name'] + "')\">"
+        tableBody += '<td><a onclick="getSpell(' + spellsList[k]['spell_id'] + "')\">"
                             + spellsList[k]['spell_name'] + '</a></td>';
                 
         tableBody += '</tr>';
@@ -41,21 +38,21 @@ function spellsCallback(responseText) {
     resultsTableElement.innerHTML = tableBody;
 }
 
-function getSpell(spellID, spellName) {
+function getSpell(spellID) {
     var url = api_base_url + 'characters_by_spell/spell_id/' + spellID;
     xmlHttpRequest = new XMLHttpRequest();
     xmlHttpRequest.open('get', url);
 
     xmlHttpRequest.onreadystatechange = function() {
         if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) { 
-            getCharactersForSpellCallback(spellID, spellName, xmlHttpRequest.responseText);
+            getCharactersForSpellCallback(spellID, xmlHttpRequest.responseText);
         }
     }; 
 
     xmlHttpRequest.send(null);
 }
 
-function getCharactersForSpellCallback(spellID, spellName, responseText){
+function getCharactersForSpellCallback(spellID, responseText){
     var characterList = JSON.parse(responseText);
     var url = api_base_url + 'spells/spell_id/' + spellID;
     xmlHttpRequest = new XMLHttpRequest();
@@ -63,14 +60,14 @@ function getCharactersForSpellCallback(spellID, spellName, responseText){
     
     xmlHttpRequest.onreadystatechange = function() {
         if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
-            getCharactersForSpellCallback2(xmlHttpRequest.responseText, characterList);
+            getCharactersForSpellCallback2(spellID, xmlHttpRequest.responseText, characterList);
         }
     };
     
     xmlHttpRequest.send(null);
 }
 
-function getCharactersForSpellCallback2(responseText, characterList) {
+function getCharactersForSpellCallback2(spellID, responseText, characterList) {
     var spellInfo = JSON.parse(responseText);
     var url = api_base_url + 'spell_count/spell_id/' + spellID;
     xmlHttpRequest = new XMLHttpRequest();
@@ -91,8 +88,7 @@ function getCharactersForSpellCallback3(responseText, characterList, spellInfo) 
     tableBody += '<tr><td>' + spellInfo['spell_name'] + ' was used ' + countResults + ' times.' + '</td></tr>';
     for (var k = 0; k < characterList.length; k++) {
         tableBody += '<tr>';
-        tableBody += '<td>' + characterList[k]['first_name'] + '</td>';
-        tableBody += '<td>' + characterList[k]['last_name'] + '</td>';
+        tableBody += '<td>' + characterList[k]['first_name'] + ' ' + characterList[k]['last_name'] +  '</td>';
         tableBody += '</tr>';
     }
 
@@ -357,8 +353,7 @@ function booksSearchCallback2(responseText, spellResults, magicword) {
     for (var k = 0; k < spellResults.length; k++) {
         tableBody += '<tr>';
 
-        tableBody += '<td><a onclick="getSpell(' + spellResults[k]['spell_id'] + ",'"
-                            + spellResults[k]['incantation'] + "')\">"
+        tableBody += '<td><a onclick="getSpell(' + spellResults[k]['spell_id'] + "')\">"
                             + spellResults[k]['incantation'] + '</a></td>';
         tableBody += '<td>' spellResults[k]['purpose'] '</td>';
 
