@@ -325,7 +325,8 @@ def get_characters_by_spell(spell_id):
         url = flask.url_for('get_character_by_id', character_id=row[0], _external=True)
         character = {'character_id': row[0], 'first_name': row[1], 'last_name': row[2],
                  'url': url}
-        character_list.append(character)
+        if character not in character_list:
+            character_list.append(character)
 
     return json.dumps(character_list)
 

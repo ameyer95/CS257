@@ -186,3 +186,103 @@ function getSpellsForBookCallback(title, responseText) {
     var resultsTableElement = document.getElementById('results_table_books');
     resultsTableElement.innerHTML = tableBody;
 }
+
+function onSearchButton() {
+    // check characters_by_spell/magicword
+    // if empty, check spells_by_character/magicword
+    // if empty, check books_spells/magicword
+    var url = api_base_url + 'characters_by_spell/' + 'magicword';
+    xmlHttpRequest = new XMLHttpRequest();
+    xmlHttpRequest.open('get', url);
+
+    xmlHttpRequest.onreadystatechange = function() {
+        if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) { 
+            spellsSearchCallback(xmlHttpRequest.responseText);
+        } 
+    };
+    
+    xmlHttpRequest.send(null);
+}
+
+
+function spellsSearchCallback(responseText) {
+    var spellsResults = JSON.parse(responseText);
+    var tableBody = '';
+    if (spellsResults.length > 0) {
+        for (var k = 0; k < spellsResults.length; k++) {
+            tableBody += '<tr>';
+
+            tableBody += '<td><a onclick="getSpell(' + spellsList[k]['spell_id'] + ",'"
+                                + spellsList[k]['spell_name'] + "')\">"
+                                + spellsList[k]['spell_name'] + '</a></td>';
+
+            tableBody += '</tr>';
+        }
+
+        var resultsTableElement = document.getElementById('results_table_spells');
+        resultsTableElement.innerHTML = tableBody;
+    }
+    
+    else if (spellsResults.length == 0) {
+        var url = api_base_url + 'spells_by_character/' + 'magicword';
+        xmlHttpRequest = new XMLHttpRequest();
+        xmlHttpRequest.open('get',url);
+        
+        xmlHttpRequest.onreadystatechange = function() {
+            if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
+                charactersSearchCallback(xmlHttpRequest.responseText)
+            }
+        }
+    }
+}
+
+function charactersSearchCallback(responseText) {
+    var characterResults = JSON.parse(responseText);
+    var tableBody = '';
+    if (characterResults.length > 0) {
+        for (var k = 0; k < characterResults.length; k++) {
+            tableBody += '<tr>';
+
+            tableBody += '<td><a onclick="getCharacter(' + characterResults[k]['char_id'] + ",'"
+                                + characterResults[k]['first_name'] + characterResults[k]['last_name'] + "')\">"
+                                + characterResults[k]['first_name'] + ' ' +characterResults[k]['last_name'] + '</a></td>';
+
+            tableBody += '</tr>';
+        }
+
+        var resultsTableElement = document.getElementById('searchResults');
+        resultsTableElement.innerHTML = tableBody;
+    }
+    
+    else if (characterResults.length == 0) {
+        var url = api_base_url + 'books_spells/' + 'magicword';
+        xmlHttpRequest = new XMLHttpRequest();
+        xmlHttpRequest.open('get',url);
+        
+        xmlHttpRequest.onreadystatechange = function() {
+            if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
+                booksSearchCallback(xmlHttpRequest.responseText)
+            }
+        }
+    }
+}
+
+function booksSearchCallback(responseText) {
+    var spellResults = JSON.parse(responseText);
+    var tableBody = '';
+
+    for (var k = 0; k < bookResults.length; k++) {
+        tableBody += '<tr>';
+
+        tableBody += '<td><a onclick="getSpell(' + spellResults[k]['spell_id'] + ",'"
+                            + spellResults[k]['incantation'] + "')\">"
+                            + spellResults[k]['incantation'] + ' ' + spellResults[k]['purpose'] + '</a></td>';
+
+        tableBody += '</tr>';
+    }
+
+    var resultsTableElement = document.getElementById('searchResults');
+    resultsTableElement.innerHTML = tableBody;
+
+}
+
