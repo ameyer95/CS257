@@ -58,7 +58,7 @@ function getCharactersForSpellCallback(spellID, spellName, responseText){
     xmlHttpRequest = new XMLHttpRequest();
     xmlHttpRequest.open('get',url);
     
-    xmlHttpRequest.onreadystatefunction = function() {
+    xmlHttpRequest.onreadystatechange = function() {
         if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
             getCharactersForSpellCallback2(xmlHttpRequest.responseText, characterList);
         }
@@ -205,7 +205,6 @@ function onSearchButton() {
     var url = api_base_url + 'characters_by_spell/' + magicword;
     xmlHttpRequest = new XMLHttpRequest();
     xmlHttpRequest.open('get', url);
-
     
     xmlHttpRequest.onreadystatechange = function() {
         if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) { 
@@ -222,9 +221,8 @@ function spellsSearchCallback(responseText, magicword) {
     if (charResults.length > 0) {
         var url = api_base_url + 'spells/' + magicword;
         xmlHttpRequest = new XMLHttpRequest();
-        xmlHttpRequest.open('get',url);
-        xmlHttpRequest.onreadystatefunction = function() {
-            document.write(xmlHttpRequest.readyState + ' and status is ' + xmlHttpRequest.status);
+        xmlHttpRequest.open('get', url);
+        xmlHttpRequest.onreadystatechange = function() {
             if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
                 spellsSearchCallback2(xmlHttpRequest.responseText, charResults, magicword);
             }
@@ -306,7 +304,7 @@ function booksSearchCallback(responseText, magicword) {
     xmlHttpRequest = new XMLHttpRequest();
     xmlHttpRequest.open('get',url);
         
-    xmlHttpRequest.onreadystatefunction = function() {
+    xmlHttpRequest.onreadystatechange = function() {
         if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
             booksSearchCallback2(xmlHttpRequest.responseText, spellResults, magicword);
         }
