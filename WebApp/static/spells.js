@@ -7,6 +7,9 @@
  *  Spring Term 2017.
  */
 
+//line 291 char_id--> char_id
+//fixed reponse--> response in one function call
+
 function onSpellsButton() {
     var url = api_base_url + 'spells';
     xmlHttpRequest = new XMLHttpRequest();
@@ -53,7 +56,7 @@ function getSpell(spellID, spellName) {
 }
 
 function getCharactersForSpellCallback(spellID, spellName, responseText){
-    var characterList = JSON.parse(reponseText);
+    var characterList = JSON.parse(responseText);
     var url = api_base_url + 'spells/spell_id/' + spellID;
     xmlHttpRequest = new XMLHttpRequest();
     xmlHttpRequest.open('get',url);
@@ -118,7 +121,7 @@ function charactersCallback(responseText) {
         tableBody += '<tr>';
 
         tableBody += '<td><a onclick="getCharacter(' + characterList[k]['character_id'] + ",'"
-                            + characterList[k]['first_name'] + ",'" + characterList[k]["last_name"] + "')\">"
+                            + characterList[k]['first_name'] + ",'" + characterList[k]['last_name'] + "')\">"
                             + characterList[k]['first_name'] + ' ' + characterList[k]['last_name'] + '</a></td>';
         
         tableBody += '</tr>';
@@ -278,13 +281,15 @@ function spellsSearchCallback2(responseText, charResults, magicword) {
 }
 
 function spellsSearchCallback3(responseText, charResults, spellResults) {
+    // since it's just an integer can we just say countResults= reponse Text?
+    // then below might need to do countResults.string in order to be able to concatanate 
     var countResults = JSON.parse(responseText);
     var tableBody = '<tr><th>' + spellResults[0]['spell_name'] + ': ' + spellResults[0]['spell_effect'] + '</th></tr>';
     tableBody += '<tr><td>' + spellResults[0]['spell_name'] + " was used " + countResults + " times " + '</td></tr>';
     for (var k = 0; k < charResults.length; k++) {
         tableBody += '<tr>';
 
-        tableBody += '<td><a onclick="getCharacter(' + charResults[k]['char_id'] + ",'"
+        tableBody += '<td><a onclick="getCharacter(' + charResults[k]['character_id'] + ",'"
                             + charResults[k]['first_name'] + charResults[k]['last_name'] + "')\">"
                             + charResults[k]['first_name'] + ' ' + charResults[k]['last_name'] + '</a></td>';
 
