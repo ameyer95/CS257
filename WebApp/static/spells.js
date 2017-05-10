@@ -69,7 +69,23 @@ function getCharactersForSpellCallback(spellID, spellName, responseText){
 
 function getCharactersForSpellCallback2(responseText, characterList) {
     var spellInfo = JSON.parse(responseText);
+    var url = api_base_url + 'spell_count/spell_id/' + spellID;
+    xmlHttpRequest = new XMLHttpRequest();
+    xmlHttpRequest.open('get',url);
+    
+    xmlHttpRequest.onreadystatechange = function() {
+        if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
+            getCharactersForSpellCallback3(xmlHttpRequest.responseText, characterList, spellInfo);
+        }
+    };
+    
+    xmlHttpRequest.send(null);
+}
+
+function getCharactersForSpellCallback3(responseText, characterList, spellInfo) {
+    var countResults = JSON.parse(responseText);
     var tableBody = '<tr><th>' + spellInfo['spell_name'] + ': ' + spellInfo['spell_effect'] + '</th></tr>';
+    tableBody += '<tr><td>' + spellInfo['spell_name'] + ' was used ' + countResults + ' times.' + '</td></tr>';
     for (var k = 0; k < characterList.length; k++) {
         tableBody += '<tr>';
         tableBody += '<td>' + characterList[k]['first_name'] + '</td>';
@@ -248,8 +264,23 @@ function spellsSearchCallback(responseText, magicword) {
 
 function spellsSearchCallback2(responseText, charResults, magicword) {
     var spellResults = JSON.parse(responseText);
-    document.write(spellResults);
+    var url = api_base_url + 'spell_count/' + magicword;
+    xmlHttpRequest = new XMLHttpRequest();
+    xmlHttpRequest.open('get',url);
+
+    xmlHttpRequest.onreadystatechange = function() {
+        if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
+            spellsSearchCallback3(xmlHttpRequest.responseText, charResults, spellResults);
+        }
+    };
+
+    xmlHttpRequest.send(null);
+}
+
+function spellsSearchCallback3(responseText, charResults, spellResults) {
+    var countResults = JSON.parse(responseText);
     var tableBody = '<tr><th>' + spellResults[0]['spell_name'] + ': ' + spellResults[0]['spell_effect'] + '</th></tr>';
+    tableBody += '<tr><td>' + spellResults[0]['spell_name'] + " was used " + countResults + " times " + '</td></tr>';
     for (var k = 0; k < charResults.length; k++) {
         tableBody += '<tr>';
 
@@ -259,10 +290,11 @@ function spellsSearchCallback2(responseText, charResults, magicword) {
 
         tableBody += '</tr>';
     }
-
+    
     var searchResults = document.getElementById('searchResults');
     searchResults.innerHTML = tableBody;
 }
+
 
 function charactersSearchCallback(responseText, magicword) {
     var charResults = JSON.parse(responseText);
