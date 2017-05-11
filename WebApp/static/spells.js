@@ -7,7 +7,9 @@
  *  Spring Term 2017.
  */
 
-
+/*
+onSpellsButton() is activated when the user clicks the "browse spells" button. It gets a list of spells from our api, and if the request is ready, passes the list into spellsCallback()
+*/
 function onSpellsButton() {
     var url = api_base_url + 'spells';
     xmlHttpRequest = new XMLHttpRequest();
@@ -22,6 +24,9 @@ function onSpellsButton() {
     xmlHttpRequest.send(null);
 }
 
+/*
+This function takes in a spellList as responseText, parses it, and creates a table of clickable spells by passing in information to getSpell
+*/
 function spellsCallback(responseText) {
     var spellsList = JSON.parse(responseText);
     var tableBody = '';
@@ -36,6 +41,9 @@ function spellsCallback(responseText) {
     resultsTableElement.innerHTML = tableBody;
 }
 
+/*
+This function gets called when clicking on one of the spells in the table created in spellsCallback. It gets the list of characters for the given spell, and passes it into getCharactersForSpellCallback along with spellId
+*/
 function getSpell(spellID) {
     var url = api_base_url + 'characters_by_spell/spell_id/' + spellID;
     xmlHttpRequest = new XMLHttpRequest();
@@ -50,11 +58,14 @@ function getSpell(spellID) {
     xmlHttpRequest.send(null);
 }
 
+/*
+This function takes the spellIDand responseTExt from getSpell, parses the list of characters from the responseText, and also gets the responseText for the given spellID. It passes this reponseText and characterList, as well as spellID into getCharacterForSpellCallback2.
+*/
 function getCharactersForSpellCallback(spellID, responseText){
     var characterList = JSON.parse(responseText);
     var url = api_base_url + 'spells/spell_id/' + spellID;
     xmlHttpRequest = new XMLHttpRequest();
-    xmlHttpRequest.open('get',url);
+    xmlHttpRequest.open('get', url);
     
     xmlHttpRequest.onreadystatechange = function() {
         if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
@@ -65,6 +76,9 @@ function getCharactersForSpellCallback(spellID, responseText){
     xmlHttpRequest.send(null);
 }
 
+/*
+This function gets the responseText for the spell_count for our spell of interest, and passes this, as well as the characterList, and parsed spellInfo into getCharactersForSpellCallback3.
+*/
 function getCharactersForSpellCallback2(spellID, responseText, characterList) {
     var spellInfo = JSON.parse(responseText);
     var url = api_base_url + 'spell_count/spell_id/' + spellID;
@@ -80,6 +94,9 @@ function getCharactersForSpellCallback2(spellID, responseText, characterList) {
     xmlHttpRequest.send(null);
 }
 
+/*
+This function parses the responseText we got for spellCount in getCharactersForSpellCallback2 into countResults. It also creates our table that should appear when a user clicks on a link to a spell - headed by the spell's name, its effect, and includes its count, and all the characters who used it.. 
+*/
 function getCharactersForSpellCallback3(responseText, characterList, spellInfo) {
     var countResults = JSON.parse(responseText);
     var tableBody = '<tr><th>' + spellInfo['spell_name'] + ': ' + spellInfo['spell_effect'] + '</th></tr>';
@@ -94,6 +111,9 @@ function getCharactersForSpellCallback3(responseText, characterList, spellInfo) 
     resultsTableElement.innerHTML = tableBody;
 }
 
+/*
+This function gets called when a user clicks on the "Browse Characters" button. It gets the responseText for a list of characters (and their attributes) from our api, and then passes this responseText into charactersCallback().
+*/
 function onCharactersButton() {
     var url = api_base_url + 'characters';
     xmlHttpRequest = new XMLHttpRequest();
@@ -108,6 +128,9 @@ function onCharactersButton() {
     xmlHttpRequest.send(null);
 }
 
+/*
+This function parses the characterList taken in and creates a table full of clickable characters, that when clicked, activate the getCharacter() function. 
+*/
 function charactersCallback(responseText) {
     // it gets here!
     var characterList = JSON.parse(responseText);
@@ -126,6 +149,9 @@ function charactersCallback(responseText) {
     resultsTableElement.innerHTML = tableBody;
 }
 
+/*
+getCharacter() is called when we click on a character link, it gets response text for the spells the given character used from our api, and calls getSpellsForCharacterCallback() with this information, as well as the first name and last name.
+*/
 function getCharacter(characterID, first_name, last_name) {
     //doesn't get here
     var url = api_base_url + 'spells_by_character/char_id/' + characterID;
@@ -140,6 +166,9 @@ function getCharacter(characterID, first_name, last_name) {
     xmlHttpRequest.send(null);
 }
 
+/*
+getSpellsForCharacterCallback() creates a table of the spells used by the given character, headed by their name, and the rows are the spell names.
+*/
 function getSpellsForCharacterCallback(first_name, last_name, responseText) {
     document.write("I AM HERE");
     var spellList = JSON.parse(responseText);
@@ -153,7 +182,10 @@ function getSpellsForCharacterCallback(first_name, last_name, responseText) {
     var resultsTableElement = document.getElementById('results_table_chars');
     resultsTableElement.innerHTML = tableBody;
 }
-    
+ 
+/*
+onBooksButton() is called when a user clicks the "Browse books" button. It gets a list of books from our api and sends it into booksCallback().
+*/
 function onBooksButton() {
     var url = api_base_url + 'books';
     xmlHttpRequest = new XMLHttpRequest();
@@ -168,6 +200,9 @@ function onBooksButton() {
     xmlHttpRequest.send(null);
 }
 
+/*
+booksCallback() parses the bookList taken in and creates a clickable list of the books by title. When a given book is clicked, it calls the getBook() function.
+*/
 function booksCallback(responseText) {
     var bookList = JSON.parse(responseText);
     var tableBody = '';
@@ -185,6 +220,9 @@ function booksCallback(responseText) {
     resultsTableElement.innerHTML = tableBody;
 }
 
+/*
+getBook is called when the user clicks on a link. It uses the api to find the spells within the book, then passes this info into getSpellsForBookCallback()
+*/
 function getBook(bookID, title) {
     var url = api_base_url + 'books_spells/book_id/' + bookID;
     xmlHttpRequest = new XMLHttpRequest();
@@ -199,6 +237,9 @@ function getBook(bookID, title) {
     xmlHttpRequest.send(null);
 }
 
+/*
+getSpellsForBookCallback() parses the taken in spellList, then creates a table headed by the books title, with the rows being the name of the spells
+*/
 function getSpellsForBookCallback(title, responseText) {
     var spellList = JSON.parse(responseText);
     var tableBody = '<tr><th>' + title + '</th></tr>';
@@ -212,6 +253,9 @@ function getSpellsForBookCallback(title, responseText) {
     resultsTableElement.innerHTML = tableBody;
 }
 
+/*
+onSearchButton() is called when a character uses our search bar, entering the "magic word". It first assumes it is a spell, and gets the list of characters that use this spell, and passes this inton spellsSearchCallback()
+*/
 function onSearchButton() {
     // check characters_by_spell/magicword
     // if empty, check spells_by_character/magicword
@@ -230,7 +274,9 @@ function onSearchButton() {
     xmlHttpRequest.send(null);
 }
 
-
+/*
+spellsSearchCallback() checks to see if magicword was indeed a spell (if so, the characrter list will be nonempy, and we will get the info on our spell and pass it into spellsSEarchCallback2()), (if not, character list will be empty, and we will assume it is a character, get this information on the character, and pass it into characterSearchCallback())
+*/
 function spellsSearchCallback(responseText, magicword) {
     var charResults = JSON.parse(responseText);
     if (charResults.length > 0) {
@@ -261,6 +307,9 @@ function spellsSearchCallback(responseText, magicword) {
     }
 }
 
+/*
+This function is reached if we conclude magicword is a spell. It finds the spell count for magic word, and passes this, along with our previous information into spellsSearchCallback3()
+*/
 function spellsSearchCallback2(responseText, charResults, magicword) {
     var spellResults = JSON.parse(responseText);
     var url = api_base_url + 'spell_count/' + magicword;
@@ -276,6 +325,9 @@ function spellsSearchCallback2(responseText, charResults, magicword) {
     xmlHttpRequest.send(null);
 }
 
+/*
+spellsSearchCallback3() parses our count information, and creates a table headed by basic spell information, and follows with rows of clickable characters
+*/
 function spellsSearchCallback3(responseText, charResults, spellResults) {
     // since it's just an integer can we just say countResults= reponse Text?
     // then below might need to do countResults.string in order to be able to concatanate 
@@ -296,7 +348,9 @@ function spellsSearchCallback3(responseText, charResults, spellResults) {
     searchResults.innerHTML = tableBody;
 }
 
-
+/*
+charactersSearchCallback() is called when we have eliminated the possibliity of magicword being a spell. We parse the list of characters taken in. If this list is longer than 0, we assume it is a character and make a table of clickable results. Otherwise, we assume magicword is a book, and get the spells used in this book from our api.
+*/
 function charactersSearchCallback(responseText, magicword) {
     var charResults = JSON.parse(responseText);
     var tableBody = '';
@@ -331,6 +385,9 @@ function charactersSearchCallback(responseText, magicword) {
     }
 }
 
+/*
+this function is called when we have determined magicword is a book. we parse the spellList we have taken in, and get basic book info, passing this into booksSearchCallback2()
+*/
 function booksSearchCallback(responseText, magicword) {
     var spellResults = JSON.parse(responseText);
     var url = api_base_url + 'books/' + magicword;
@@ -346,6 +403,9 @@ function booksSearchCallback(responseText, magicword) {
     xmlHttpRequest.send(null);
 }
 
+/*
+booksSearchCallback2() parses our book result taken in, and if it is not a book (determined by whether spell results has length 0), we give an error message. Otherwise, create a table headed by the book table, and the rows are the spells used in the books. 
+*/
 function booksSearchCallback2(responseText, spellResults, magicword) {
     var bookResult = JSON.parse(responseText);
 
