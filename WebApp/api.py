@@ -382,7 +382,7 @@ def get_spell_count_by_name(incantation):
 def get_spell_count_by_book(book_id, spell_id):
     ''' 
     Returns the number of time a given spell (input as an ID number) was
-    used across a given books
+    used in a given book
     '''
    
     query = '''SELECT COUNT(*)
@@ -397,7 +397,7 @@ def get_spell_count_by_book(book_id, spell_id):
 @app.route('/books_spell_count/<book_name>/<incantation>')
 def get_spell_count_by_book_by_names(incantation, book_name):
     ''' 
-    Return the number of time a given spell was used across a given books.
+    Return the number of time a given spell was used in a given book.
     Allows the user to input the spell name as a string and the book name as a string, then finds the associated
     ID numbers and calls the get_spell_count_by_book method.
     '''
