@@ -32,7 +32,7 @@ function spellsCallback(responseText) {
     var tableBody = '';
     for (var k = 0; k < spellsList.length; k++) {
         tableBody += '<tr>';
-        tableBody += '<td><a onclick="getSpell(' + spellsList[k]['spell_id'] + "')\">" + spellsList[k]['spell_name'] + '</a></td>';
+        tableBody += '<td><a onclick="getSpell(' + spellsList[k]['spell_id'] + ")\">" + spellsList[k]['spell_name'] + '</a></td>';
                 
         tableBody += '</tr>';
     }
@@ -138,13 +138,13 @@ function charactersCallback(responseText) {
     for (var k = 0; k < characterList.length; k++) {
         tableBody += '<tr>';
         // gets here from character browsing
+        //document.write('getCharacter(' + characterList[k]['character_id'] + ",'" + characterList[k]['first_name'] + ",'" + characterList[k]['last_name'] +"')");
         tableBody += '<td><a onclick="getCharacter(' + characterList[k]['character_id'] + ",'"
-                            + characterList[k]['first_name'] + ",'" + characterList[k]['last_name'] +"')\">"
+                            + characterList[k]['first_name'] + "','" + characterList[k]['last_name'] +"')\">"
                             + characterList[k]['first_name'] + ' ' + characterList[k]['last_name'] + '</a></td>';
         
         tableBody += '</tr>';
     }
-    
     var resultsTableElement = document.getElementById('results_table_chars');
     resultsTableElement.innerHTML = tableBody;
 }
@@ -170,7 +170,6 @@ function getCharacter(characterID, first_name, last_name) {
 getSpellsForCharacterCallback() creates a table of the spells used by the given character, headed by their name, and the rows are the spell names.
 */
 function getSpellsForCharacterCallback(first_name, last_name, responseText) {
-    document.write("I AM HERE");
     var spellList = JSON.parse(responseText);
     var tableBody = '<tr><th>' + first_name + ' ' + last_name + '</th></tr>';
     for (var k = 0; k < spellList.length; k++) {
@@ -338,7 +337,7 @@ function spellsSearchCallback3(responseText, charResults, spellResults) {
         tableBody += '<tr>';
 
         tableBody += '<td><a onclick="getCharacter(' + charResults[k]['character_id'] + ",'"
-                            + charResults[k]['first_name'] + ",'" + charResults[k]['last_name'] + "')\">"
+                            + charResults[k]['first_name'] + "','" + charResults[k]['last_name'] + "')\">"
                             + charResults[k]['first_name'] + ' ' + charResults[k]['last_name'] + '</a></td>';
 
         tableBody += '</tr>';
@@ -360,7 +359,7 @@ function charactersSearchCallback(responseText, magicword) {
             tableBody += '<tr>';
 
             tableBody += '<td><a onclick="getCharacter(' + charResults[k]['character_id'] + ",'"
-                                + charResults[k]['first_name'] + ",'" + charResults[k]['last_name'] + "')\">"
+                                + charResults[k]['first_name'] + "','" + charResults[k]['last_name'] + "')\">"
                                 + charResults[k]['first_name'] + ' ' + charResults[k]['last_name'] + '</a></td>';
 
             tableBody += '</tr>';
@@ -420,7 +419,7 @@ function booksSearchCallback2(responseText, spellResults, magicword) {
         for (var k = 0; k < spellResults.length; k++) {
             tableBody += '<tr>';
 
-            tableBody += '<td><a onclick="getSpell(' + spellResults[k]['spell_id'] + "')\">"
+            tableBody += '<td><a onclick="getSpell(' + spellResults[k]['spell_id'] + ")\">"
                                 + spellResults[k]['incantation'] + '</a></td>';
             tableBody += '<td>' +  spellResults[k]['purpose'] + '</td>';
             tableBody += '</tr>';
