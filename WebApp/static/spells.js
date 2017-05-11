@@ -37,7 +37,6 @@ function spellsCallback(responseText) {
 }
 
 function getSpell(spellID) {
-    document.write("in get spell");
     var url = api_base_url + 'characters_by_spell/spell_id/' + spellID;
     xmlHttpRequest = new XMLHttpRequest();
     xmlHttpRequest.open('get', url);
@@ -115,9 +114,9 @@ function charactersCallback(responseText) {
     var tableBody = '';
     for (var k = 0; k < characterList.length; k++) {
         tableBody += '<tr>';
-
+        // gets here from character browsing
         tableBody += '<td><a onclick="getCharacter(' + characterList[k]['character_id'] + ",'"
-                            + characterList[k]['first_name'] + ",'" + characterList[k]['last_name'] +  "')\">"
+                            + characterList[k]['first_name'] + ",'" + characterList[k]['last_name'] +"')\">"
                             + characterList[k]['first_name'] + ' ' + characterList[k]['last_name'] + '</a></td>';
         
         tableBody += '</tr>';
@@ -128,8 +127,7 @@ function charactersCallback(responseText) {
 }
 
 function getCharacter(characterID, first_name, last_name) {
-    //doesn't get here 
-    document.write(first_name);
+    //doesn't get here
     var url = api_base_url + 'spells_by_character/char_id/' + characterID;
     xmlHttpRequest = new XMLHttpRequest();
     xmlHttpRequest.open('get', url);
@@ -143,7 +141,7 @@ function getCharacter(characterID, first_name, last_name) {
 }
 
 function getSpellsForCharacterCallback(first_name, last_name, responseText) {
-    // it thinks character = [Object object]
+    document.write("I AM HERE");
     var spellList = JSON.parse(responseText);
     var tableBody = '<tr><th>' + first_name + ' ' + last_name + '</th></tr>';
     for (var k = 0; k < spellList.length; k++) {
@@ -350,19 +348,26 @@ function booksSearchCallback(responseText, magicword) {
 
 function booksSearchCallback2(responseText, spellResults, magicword) {
     var bookResult = JSON.parse(responseText);
-    var tableBody = '<tr><th>' + bookResult['book_name'] + '</th></tr>';
 
-    for (var k = 0; k < spellResults.length; k++) {
-        tableBody += '<tr>';
-
-        tableBody += '<td><a onclick="getSpell(' + spellResults[k]['spell_id'] + "')\">"
-                            + spellResults[k]['incantation'] + '</a></td>';
-        tableBody += '<td>' +  spellResults[k]['purpose'] + '</td>';
-        tableBody += '</tr>';
+    if (spellResults.length == 0) {
+        var tableBody = '<tr><th>' + "No spells, characters, or books match your search" + '</th></tr>';
+        
+        var searchResults = document.getElementById('searchResults');
+        searchResults.innerHTML = tableBody; 
     }
+    else {
+        var tableBody = '<tr><th>' + bookResult['book_name'] + '</th></tr>';
+        for (var k = 0; k < spellResults.length; k++) {
+            tableBody += '<tr>';
 
-    var searchResults = document.getElementById('searchResults');
-    searchResults.innerHTML = tableBody;
+            tableBody += '<td><a onclick="getSpell(' + spellResults[k]['spell_id'] + "')\">"
+                                + spellResults[k]['incantation'] + '</a></td>';
+            tableBody += '<td>' +  spellResults[k]['purpose'] + '</td>';
+            tableBody += '</tr>';
+        }
 
+        var searchResults = document.getElementById('searchResults');
+        searchResults.innerHTML = tableBody;
+    }
 }
 
