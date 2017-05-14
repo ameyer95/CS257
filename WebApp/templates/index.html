@@ -16,32 +16,49 @@
         <h3> CS 257: Spring 2017 </h3>
     </div>
 
-    <div id="assignment_content">
+    <div id="search_bar">
         
         <p><input id="magicword" type="text" />
         <button onclick="onSearchButton()">Search</button>
+        <button onclick="onResetAllButton()">Reset All</button>
         </p>
         
         <p><table id="searchResults"></table></p>
-        
+    </div>
+    
+    <div id = "top_10">
+        <p><button onclick="onTop10Button()">See the 10 most popular spells</button>
+    
+        <p><table id="top10Results"></table></p>
+    </div>
+    <p></p>
+
+    <div id="spells"> 
         <h3>Spells</h3>
 
-        <p><button id="spells_button" onclick="onSpellsButton()">Browse Spells</button></p>
+        <p><button id="spells_button" onclick="onSpellsButton()">Browse Spells</button>
+        <button id="spellsResetButton" onclick="onSpellsResetButton()">Reset</button></p>
 
         <p><table id="results_table_spells"></table></p>
-
+    </div>
+    
+    <div id="characters">
         <h3> Characters </h3>
     
-        <p><button id="characters_button" onclick="onCharactersButton()"> Browse Characters</button></p>
+        <p><button id="characters_button" onclick="onCharactersButton()"> Browse Characters</button>
+        <button id="charactersResetButton" onclick="onCharactersResetButton()">Reset</button></p>
     
         <p><table id='results_table_chars'></table></p>
-        
+    </div>
+
+    <div id="books">
         <h3> Books </h3>
     
-        <p><button id="books_button" onclick="onBooksButton()"> Browse Books </button></p>
+        <p><button id="books_button" onclick="onBooksButton()"> Browse Books </button>
+        <button id="booksResetButton" onclick = "onBooksResetButton()">Reset</button></p>
     
         <p><table id="results_table_books"></table></p>
-        
     </div>
+
   </body>
 </html>

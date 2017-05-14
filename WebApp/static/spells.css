@@ -11,6 +11,24 @@ table {
     border-collapse: collapse;
 }
 
+#spells {
+    width: 30%;
+    height: 100%;
+    float:left;
+}
+
+#characters {
+    width: 30%;
+    height: 100%;
+    float:left;
+}
+
+#spells {
+    width: 30%;
+    height: 100%;
+    float:left;
+}
+
 th, td {
     border-bottom: 1px solid #ddd;
     padding: 15px;

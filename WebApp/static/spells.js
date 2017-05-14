@@ -10,6 +10,36 @@
 /*
 onSpellsButton() is activated when the user clicks the "browse spells" button. It gets a list of spells from our api, and if the request is ready, passes the list into spellsCallback()
 */
+
+function onTop10Button() {
+    var url = api_base_url + 'spells/top/10';
+    xmlHttpRequest = new XMLHttpRequest();
+    xmlHttpRequest.open('get', url);
+
+    xmlHttpRequest.onreadystatechange = function() {
+        if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) { 
+            top10Callback(xmlHttpRequest.responseText);
+        } 
+    };
+    
+    xmlHttpRequest.send(null);
+}
+
+function top10Callback(responseText) {
+    var top10List = JSON.parse(responseText);
+    var tableBody = '<tr><th>' + "Spell Name: Number of times used" + '</th></tr>';
+    for (var k = 0; k < top10List.length; k++) {
+        tableBody += '<tr>';
+        tableBody += '<td><a onclick="getSpell(' + top10List[k]['spell_id'] + ")\">" + top10List[k]['spell_name'] + '</a></td>';
+        tableBody += '<td>' + top10List[k]['count'] + '</td>';
+                
+        tableBody += '</tr>';
+    }
+
+    var resultsTableElement = document.getElementById('results_table_spells');
+    resultsTableElement.innerHTML = tableBody;
+}
+
 function onSpellsButton() {
     var url = api_base_url + 'spells';
     xmlHttpRequest = new XMLHttpRequest();
@@ -100,10 +130,12 @@ This function parses the responseText we got for spellCount in getCharactersForS
 function getCharactersForSpellCallback3(responseText, characterList, spellInfo) {
     var countResults = JSON.parse(responseText);
     var tableBody = '<tr><th>' + spellInfo['spell_name'] + ': ' + spellInfo['spell_effect'] + '</th></tr>';
-    tableBody += '<tr><td>' + spellInfo['spell_name'] + ' was used ' + countResults + ' times.' + '</td></tr>';
+    tableBody += '<tr><td>' + spellInfo['spell_name'] + ' was used ' + countResults + ' times by these people' + '</td></tr>';
     for (var k = 0; k < characterList.length; k++) {
         tableBody += '<tr>';
-        tableBody += '<td>' + characterList[k]['first_name'] + ' ' + characterList[k]['last_name'] +  '</td>';
+        tableBody += '<td><a onclick="getCharacter(' + characterList[k]['character_id'] + ",'"
+                            + characterList[k]['first_name'] + "','" + characterList[k]['last_name'] +"')\">"
+                            + characterList[k]['first_name'] + ' ' + characterList[k]['last_name'] + '</a></td>';
         tableBody += '</tr>';
     }
 
@@ -174,7 +206,7 @@ function getSpellsForCharacterCallback(first_name, last_name, responseText) {
     var tableBody = '<tr><th>' + first_name + ' ' + last_name + '</th></tr>';
     for (var k = 0; k < spellList.length; k++) {
         tableBody += '<tr>';
-        tableBody += '<td>' + spellList[k]['incantation'] + '</td>';
+        tableBody += '<td><a onclick="getSpell(' + spellList[k]['spell_id'] + ")\">" + spellList[k]['incantation'] + '</a></td>';
         tableBody += '</tr>';
     }
 
@@ -244,7 +276,9 @@ function getSpellsForBookCallback(title, responseText) {
     var tableBody = '<tr><th>' + title + '</th></tr>';
     for (var k = 0; k < spellList.length; k++) {
         tableBody += '<tr>';
-        tableBody += '<td>' + spellList[k]['incantation'] + '</td>';
+        
+        tableBody += '<td><a onclick="getSpell(' + spellList[k]['spell_id'] + ")\">" + spellList[k]                 ['incantation'] + '</a></td>';
+        
         tableBody += '</tr>';
     }
 
@@ -332,7 +366,7 @@ function spellsSearchCallback3(responseText, charResults, spellResults) {
     // then below might need to do countResults.string in order to be able to concatanate 
     var countResults = JSON.parse(responseText);
     var tableBody = '<tr><th>' + spellResults[0]['spell_name'] + ': ' + spellResults[0]['spell_effect'] + '</th></tr>';
-    tableBody += '<tr><td>' + spellResults[0]['spell_name'] + " was used " + countResults + " times " + '</td></tr>';
+    tableBody += '<tr><td>' + spellResults[0]['spell_name'] + " was used " + countResults + " times by these people" + '</td></tr>';
     for (var k = 0; k < charResults.length; k++) {
         tableBody += '<tr>';
 
@@ -370,7 +404,7 @@ function charactersSearchCallback(responseText, magicword) {
     }
     
     else if (charResults.length == 0) {
-        var url = api_base_url + 'books_spells/' + magicword;
+        var url = api_base_url + 'books/' + magicword;
         xmlHttpRequest = new XMLHttpRequest();
         xmlHttpRequest.open('get',url);
         
@@ -385,48 +419,40 @@ function charactersSearchCallback(responseText, magicword) {
 }
 
 /*
-this function is called when we have determined magicword is a book. we parse the spellList we have taken in, and get basic book info, passing this into booksSearchCallback2()
+booksSearchCallback() parses our book result taken in, and if it is not a book (determined by whether spell results has length 0), we give an error message. Otherwise, create a table headed by the book table, and the rows are the spells used in the books. 
 */
 function booksSearchCallback(responseText, magicword) {
-    var spellResults = JSON.parse(responseText);
-    var url = api_base_url + 'books/' + magicword;
-    xmlHttpRequest = new XMLHttpRequest();
-    xmlHttpRequest.open('get',url);
-        
-    xmlHttpRequest.onreadystatechange = function() {
-        if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
-            booksSearchCallback2(xmlHttpRequest.responseText, spellResults, magicword);
-        }
-    };
-    
-    xmlHttpRequest.send(null);
-}
-
-/*
-booksSearchCallback2() parses our book result taken in, and if it is not a book (determined by whether spell results has length 0), we give an error message. Otherwise, create a table headed by the book table, and the rows are the spells used in the books. 
-*/
-function booksSearchCallback2(responseText, spellResults, magicword) {
     var bookResult = JSON.parse(responseText);
 
-    if (spellResults.length == 0) {
+    if (Object.keys(bookResult).length == 0) {
         var tableBody = '<tr><th>' + "No spells, characters, or books match your search" + '</th></tr>';
         
         var searchResults = document.getElementById('searchResults');
         searchResults.innerHTML = tableBody; 
     }
     else {
-        var tableBody = '<tr><th>' + bookResult['book_name'] + '</th></tr>';
-        for (var k = 0; k < spellResults.length; k++) {
-            tableBody += '<tr>';
-
-            tableBody += '<td><a onclick="getSpell(' + spellResults[k]['spell_id'] + ")\">"
-                                + spellResults[k]['incantation'] + '</a></td>';
-            tableBody += '<td>' +  spellResults[k]['purpose'] + '</td>';
-            tableBody += '</tr>';
-        }
+        var tableBody = '<tr><td><a onclick="getBook(' + bookResult['book_id'] + ",'" + bookResult['book_name'] + "')\">" + bookResult['book_name'] + '</a></td></tr>';
 
         var searchResults = document.getElementById('searchResults');
         searchResults.innerHTML = tableBody;
     }
 }
 
+function onResetAllButton(){
+    location.reload();
+}
+
+function onSpellsResetButton(){
+    var spellResults = document.getElementById('results_table_spells');
+    spellResults.innerHTML = "";
+}
+
+function onCharactersResetButton(){
+    var charResults = document.getElementById('results_table_chars');
+    charResults.innerHTML = "";
+} 
+
+function onBooksResetButton(){
+    var bookResults = document.getElementById('results_table_books');
+    bookResults.innerHTML = "";
+}

@@ -12,6 +12,7 @@ import flask
 import json
 import config
 import psycopg2
+from operator import itemgetter
 
 app = flask.Flask(__name__,static_folder='static',template_folder = 'template')
 
@@ -37,7 +38,6 @@ def _fetch_all_rows_for_query(query):
         rows = cursor.fetchall()  # This can be trouble if your query results are really big.
     except Exception as e:
         print('Error querying database:', e, file=sys.stderr)
-
     connection.close()
     return rows
 
@@ -413,6 +413,18 @@ def get_spell_count_by_book_by_names(incantation, book_name):
             book_id = book_dict['book_id']
             return get_spell_count_by_book(book_id, spell_id)
     return get_spell_count_by_book(0,0)
+
+@app.route('/spells/top/<num>')
+def get_top_10(num):
+    '''Returns the top <num> most commonly used spells'''
+    
+    query = '''SELECT * FROM spells'''
+    spells = []
+    for row in _fetch_all_rows_for_query(query):
+        count = get_spell_count(row[0])
+        spells.append({"spell_id":row[0],"spell_name":row[1],"count":int(count)})
+    spellsSorted = sorted(spells, key=itemgetter("count"), reverse=True);
+    return json.dumps(spellsSorted[0:int(num)])
 
 @app.route('/help')
 def help():

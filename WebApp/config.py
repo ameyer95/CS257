@@ -7,6 +7,6 @@
     app for CS257, Spring 2017
 '''
 
-database = 'comminsp'
-user = 'comminsp'
-password = 'glass773happy'
+database = 'meyera'
+user = 'meyera'
+password = 'java554eyebrow'
