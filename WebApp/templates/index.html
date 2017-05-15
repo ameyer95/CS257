@@ -6,14 +6,13 @@
     <script type="text/javascript" src="{{ url_for('static', filename='spells-config.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='spells.js') }}"></script>
     <link rel="shortcut icon" href="{{ url_for('static', filename='Harry-Potter-Logo.ico') }}" />
-    <title>CS 257: Software Design, Spring 2017</title>
+    <title>Standard Book of Spells</title>
 </head>
 
 <body>
     <div id="assignment_header">
         <h1>A Standard Book of Spells</h1>
         <h2>A guide to the spells used in Harry Potter</h2>
-        <h3> CS 257: Spring 2017 </h3>
     </div>
 
     <div id="search_bar">
@@ -23,13 +22,12 @@
         <button onclick="onResetAllButton()">Reset All</button>
         </p>
         
-        <p><table id="searchResults"></table></p>
+        <p><table id="search_results"></table></p>
     </div>
     
     <div id = "top_10">
         <p><button onclick="onTop10Button()">See the 10 most popular spells</button>
     
-        <p><table id="top10Results"></table></p>
     </div>
     <p></p>
 

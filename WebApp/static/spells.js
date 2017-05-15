@@ -2,8 +2,8 @@
  *  spells.js
  *  Patty Commins and Anna Meyer, 7 May 2017
  *
- *  A little bit of Javascript showing one small example of AJAX
- *  within the "Harry Potter spells" sample for Carleton CS257,
+ *  The Javascript that connects our API with the user interface
+ *  within the "Harry Potter spells" webapp for Carleton CS257,
  *  Spring Term 2017.
  */
 
@@ -378,7 +378,7 @@ function spellsSearchCallback3(responseText, charResults, spellResults) {
         tableBody += '</tr>';
     }
     
-    var searchResults = document.getElementById('searchResults');
+    var searchResults = document.getElementById('results_table_spells');
     searchResults.innerHTML = tableBody;
 }
 
@@ -400,7 +400,7 @@ function charactersSearchCallback(responseText, magicword) {
             tableBody += '</tr>';
         }
 
-        var searchResults = document.getElementById('searchResults');
+        var searchResults = document.getElementById('results_table_chars');
         searchResults.innerHTML = tableBody;
     }
     
@@ -428,13 +428,13 @@ function booksSearchCallback(responseText, magicword) {
     if (Object.keys(bookResult).length == 0) {
         var tableBody = '<tr><th>' + "No spells, characters, or books match your search" + '</th></tr>';
         
-        var searchResults = document.getElementById('searchResults');
+        var searchResults = document.getElementById('search_results');
         searchResults.innerHTML = tableBody; 
     }
     else {
         var tableBody = '<tr><td><a onclick="getBook(' + bookResult['book_id'] + ",'" + bookResult['book_name'] + "')\">" + bookResult['book_name'] + '</a></td></tr>';
 
-        var searchResults = document.getElementById('searchResults');
+        var searchResults = document.getElementById('results_table_books');
         searchResults.innerHTML = tableBody;
     }
 }
