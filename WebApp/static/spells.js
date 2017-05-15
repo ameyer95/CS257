@@ -7,10 +7,10 @@
  *  Spring Term 2017.
  */
 
-/*
-onSpellsButton() is activated when the user clicks the "browse spells" button. It gets a list of spells from our api, and if the request is ready, passes the list into spellsCallback()
-*/
 
+/*
+onTop10Button() is activated when the user clicks the button "See the top 10 spells." It gets the response text for the top 10 spells using out api, and sends this into the top10Callback.
+*/
 function onTop10Button() {
     var url = api_base_url + 'spells/top/10';
     xmlHttpRequest = new XMLHttpRequest();
@@ -25,6 +25,9 @@ function onTop10Button() {
     xmlHttpRequest.send(null);
 }
 
+/*
+top10Callback() uses the response text gotten during onTop10Button(), and creates a clickable table of the top 10 spells and their counts.
+*/
 function top10Callback(responseText) {
     var top10List = JSON.parse(responseText);
     var tableBody = '<tr><th>' + "Spell Name: Number of times used" + '</th></tr>';
@@ -40,6 +43,9 @@ function top10Callback(responseText) {
     resultsTableElement.innerHTML = tableBody;
 }
 
+/*
+onSpellsButton() is activated when the user clicks the "browse spells" button. It gets a list of spells from our api, and if the request is ready, passes the list into spellsCallback()
+*/
 function onSpellsButton() {
     var url = api_base_url + 'spells';
     xmlHttpRequest = new XMLHttpRequest();
@@ -125,7 +131,7 @@ function getCharactersForSpellCallback2(spellID, responseText, characterList) {
 }
 
 /*
-This function parses the responseText we got for spellCount in getCharactersForSpellCallback2 into countResults. It also creates our table that should appear when a user clicks on a link to a spell - headed by the spell's name, its effect, and includes its count, and all the characters who used it.. 
+This function parses the responseText we got for spellCount in getCharactersForSpellCallback2 into countResults. It also creates our table that should appear when a user clicks on a link to a spell - headed by the spell's name, its effect, and includes its count, and all the characters who used it (clickable). 
 */
 function getCharactersForSpellCallback3(responseText, characterList, spellInfo) {
     var countResults = JSON.parse(responseText);
@@ -164,13 +170,10 @@ function onCharactersButton() {
 This function parses the characterList taken in and creates a table full of clickable characters, that when clicked, activate the getCharacter() function. 
 */
 function charactersCallback(responseText) {
-    // it gets here!
     var characterList = JSON.parse(responseText);
     var tableBody = '';
     for (var k = 0; k < characterList.length; k++) {
         tableBody += '<tr>';
-        // gets here from character browsing
-        //document.write('getCharacter(' + characterList[k]['character_id'] + ",'" + characterList[k]['first_name'] + ",'" + characterList[k]['last_name'] +"')");
         tableBody += '<td><a onclick="getCharacter(' + characterList[k]['character_id'] + ",'"
                             + characterList[k]['first_name'] + "','" + characterList[k]['last_name'] +"')\">"
                             + characterList[k]['first_name'] + ' ' + characterList[k]['last_name'] + '</a></td>';
@@ -199,7 +202,7 @@ function getCharacter(characterID, first_name, last_name) {
 }
 
 /*
-getSpellsForCharacterCallback() creates a table of the spells used by the given character, headed by their name, and the rows are the spell names.
+getSpellsForCharacterCallback() creates a clickable table of the spells used by the given character, headed by their name, and the rows are the spell names.
 */
 function getSpellsForCharacterCallback(first_name, last_name, responseText) {
     var spellList = JSON.parse(responseText);
@@ -269,7 +272,7 @@ function getBook(bookID, title) {
 }
 
 /*
-getSpellsForBookCallback() parses the taken in spellList, then creates a table headed by the books title, with the rows being the name of the spells
+getSpellsForBookCallback() parses the taken in spellList, then creates a table headed by the books title, with the rows being the name of the spells, which are clickable
 */
 function getSpellsForBookCallback(title, responseText) {
     var spellList = JSON.parse(responseText);
@@ -362,8 +365,6 @@ function spellsSearchCallback2(responseText, charResults, magicword) {
 spellsSearchCallback3() parses our count information, and creates a table headed by basic spell information, and follows with rows of clickable characters
 */
 function spellsSearchCallback3(responseText, charResults, spellResults) {
-    // since it's just an integer can we just say countResults= reponse Text?
-    // then below might need to do countResults.string in order to be able to concatanate 
     var countResults = JSON.parse(responseText);
     var tableBody = '<tr><th>' + spellResults[0]['spell_name'] + ': ' + spellResults[0]['spell_effect'] + '</th></tr>';
     tableBody += '<tr><td>' + spellResults[0]['spell_name'] + " was used " + countResults + " times by these people" + '</td></tr>';
@@ -419,7 +420,7 @@ function charactersSearchCallback(responseText, magicword) {
 }
 
 /*
-booksSearchCallback() parses our book result taken in, and if it is not a book (determined by whether spell results has length 0), we give an error message. Otherwise, create a table headed by the book table, and the rows are the spells used in the books. 
+booksSearchCallback() parses our book result taken in, and if it is not a book (determined by whether spell results has length 0), we give an error message. Otherwise, create a table headed by the book table, and the rows are the spells used in the books, which are clickable. 
 */
 function booksSearchCallback(responseText, magicword) {
     var bookResult = JSON.parse(responseText);
