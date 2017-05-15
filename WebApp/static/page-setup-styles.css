@@ -7,50 +7,38 @@ https://github.com/ondich/cs257_2017/blob/master/books/static/jeff-course-styles
 
 @import url('http://fonts.googleapis.com/css?family=Georgia|Cabin|Playfair Display');
 
-#right {
-  width: 40%;
-  float: right;
-  margin: 0em 0em 0em 0em;
-  padding: 5px 5px 5px 5px;
-}
-
-#left {
-  width: 40%;
-  float: left;
-  margin: 0em 0em 0em 0em;
-  padding: 5px 5px 5px 5px;
-}
 
 #spells {
-    width: 33%;
+    width: 40%;
     height: 100%;
     float:left;
     clear:left;
+    padding: 0em 4em 0em 0em;
 }
 
 #characters {
-    width: 33%;
+    width: 25%;
     height: 100%;
-    float:left;
+    float:center;
 }
 
 #books {
-    width: 33%;
+    width: 30%;
     height: 100%;
-    float:left;
+    float:right;
 }
 
 #assignment_header {
   width: 100%;
   margin: 0px;
-  padding: 8px;
+  padding: 15px;
   background: #2929a3;
   color: #ffffff;
 }
 
 #search_bar {
   width: 50%;
-  height:50%;
+  height:5%;
   float:left;
   margin: 0px;
   padding: 0em 0em 0em 0em;
@@ -58,7 +46,7 @@ https://github.com/ondich/cs257_2017/blob/master/books/static/jeff-course-styles
 
 #top_10 {
     width:50%;
-    height:50%;
+    height:5%;
     float:left;
     margin: 0px;
     padding: 0em 0em 0em 0em;
@@ -79,6 +67,7 @@ div.code {
 
 
 body {
+  width: 100%;
   background-color: #FAFAFA;
   color: #230000;
   line-height: 135%;
@@ -160,13 +149,13 @@ a:hover {
 
 @media screen and (min-width: 1000px) {
   body {
-    width: 900px;
+    width: 1100px;
     margin: auto;
-    margin-top: 50px;
+    margin-top: 30px;
   }
 }
 
-@media screen and (min-width: 750px) and (max-width: 950px) {
+@media screen and (min-width: 100px) and (max-width: 1100px) {
   body {
     margin: 6%;
   }
@@ -175,7 +164,7 @@ a:hover {
   }
 }
 
-@media screen and (max-width: 750px) {
+@media screen and (max-width: 1100px) {
   body {
     margin: 2% 2% 3em 2%;
   }
