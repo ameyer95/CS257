@@ -77,8 +77,8 @@ public class SpriteWorld extends Application {
 
         double annaX = 100.0;
         double annaY = 55.0;
-        double annaWidth = 70.0;
-        double annaHeight = 70.0;
+        double annaWidth = 50.0;
+        double annaHeight = 50.0;
         double annaVelocityX = 5.0;
         double annaVelocityY = 3.0;
 
@@ -87,6 +87,14 @@ public class SpriteWorld extends Application {
         sprite.setSize(annaWidth, annaHeight);
         sprite.setPosition(annaX, annaY);
         sprite.setVelocity(annaVelocityX, annaVelocityY);
+        root.getChildren().add(sprite);
+        this.spriteList.add(sprite);
+
+        sprite = new Box();
+        sprite.setName("Anna Box");
+        sprite.setSize(annaWidth, annaHeight);
+        sprite.setPosition(annaX, annaY);
+        sprite.setVelocity(annaVelocityX,annaVelocityY);
         root.getChildren().add(sprite);
         this.spriteList.add(sprite);
 
