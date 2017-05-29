@@ -9,6 +9,19 @@ Graphic user interface for Game of Life simulation, Software Design final projec
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<GridPane fx:controller="lifeSimulation.Controller"
-          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
-</GridPane>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane fx:controller="lifeSimulation.Controller" xmlns:fx="http://javafx.com/fxml">
+
+    <Button fx:id="pauseButton" text="Pause" AnchorPane.leftAnchor="30" AnchorPane.topAnchor="15" onAction="#onPauseButton"/>
+
+    <Button fx:id="playButton" text="Play" AnchorPane.leftAnchor="90" AnchorPane.topAnchor="15" onAction="#onPlayButton"/>
+
+    <Label fx:id="timeKeeperLabel" AnchorPane.leftAnchor="150" AnchorPane.topAnchor="15" />
+
+    <GridPane fx:id="gameBoard"
+           AnchorPane.topAnchor="60" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
+                style="-fx-background-color: #bbb; -fx-border-color:black; -fx-border-width:1px 0px 1px 0px;">
+
+
+    </GridPane>
+</AnchorPane>

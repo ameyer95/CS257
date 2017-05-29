@@ -25,6 +25,7 @@ public class Box {
     public Box(double positionX, double positionY) {
         this.positionX = positionX;
         this.positionY = positionY;
+        this.alive = false;
     }
 
     /**

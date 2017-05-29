@@ -15,6 +15,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import java.util.ArrayList;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -26,13 +28,23 @@ public class Controller implements EventHandler<MouseEvent> {
     @FXML private Button pauseButton;
     @FXML private Button playButton;
     @FXML private Label timeKeeperLabel;
-    @FXML private AnchorPane gameBoard;
-    //use a for loop to create lots of boxes. Maybe determine # of boxes based on size of window? Otherwise could have a fixed number.
+    @FXML private GridPane gameBoard;
 
     private int score; //number of boxes that are alive
     private boolean paused;
     private Timer timer;
+    private ArrayList<Box> BoxList;
+//Make box extend node so that this'll work?
 
+
+    public void initialize() {
+        for (int row = 0; row < 20; row ++) {
+            for (int col = 0; col < 40; col ++) {
+                gameBoard.add(new Button(), col, row);
+                BoxList.add(new Box((double) col, (double) row));
+            }
+        }
+    }
     /**
      * Constructor
      */
