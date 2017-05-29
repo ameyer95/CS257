@@ -33,7 +33,7 @@ public class Controller implements EventHandler<MouseEvent> {
     private int score; //number of boxes that are alive
     private boolean paused;
     private Timer timer;
-    private ArrayList<Box> BoxList;
+    private ArrayList<Box> BoxList = new ArrayList<Box>();
 //Make box extend node so that this'll work?
 
 
