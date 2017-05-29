@@ -1,3 +1,10 @@
+/**
+ * Controller.java
+ * Created by Patty Commins and Anna Meyer
+ *
+ * Controller for the Game of Life Simulation, Software Design final project, Spring 2017
+ */
+
 package lifeSimulation;
 
 import javafx.application.Platform;
@@ -26,11 +33,17 @@ public class Controller implements EventHandler<MouseEvent> {
     private boolean paused;
     private Timer timer;
 
+    /**
+     * Constructor
+     */
     public Controller() {
         this.paused = true;
         this.score = 0;
     }
 
+    /**
+     * Starts and maintains the timer
+     */
     private void startTimer() {
         this.timer = new java.util.Timer();
         TimerTask timerTask = new TimerTask() {
@@ -46,16 +59,31 @@ public class Controller implements EventHandler<MouseEvent> {
         long frameTimeInMilliseconds = (long)(1000.0 / FRAMES_PER_SECOND);
         this.timer.schedule(timerTask, 0, frameTimeInMilliseconds);
     }
+
+    /**
+     * Iterate through the grid to update the simulation to the next stage.
+     * Check positions and neighbors and recolor boxes as necessary
+     */
     private void updateAnimation() {
         // check positions & neighbors and recolor boxes as necessary
     }
 
+    /**
+     * Interprets when the user clicks on the screen
+     *
+     * @param click
+     */
     @Override
     public void handle(MouseEvent click) {
         Double Xcoord = click.getScreenX();
         Double Ycoord = click.getScreenY();
     }
 
+    /**
+     * Pause the simulation
+     *
+     * @param actionEvent
+     */
     public void onPauseButton(ActionEvent actionEvent) {
         if (!this.paused) {
             this.timer.cancel();
@@ -63,6 +91,11 @@ public class Controller implements EventHandler<MouseEvent> {
         this.paused = true;
     }
 
+    /**
+     * Play the simulation
+     *
+     * @param actionEvent
+     */
     public void onPlayButton(ActionEvent actionEvent) {
         if (this.paused) {
             this.startTimer();

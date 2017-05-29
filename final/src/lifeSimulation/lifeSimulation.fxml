@@ -1,3 +1,9 @@
+<!--
+lifeSimulation.fxml
+Created by Patty Commins and Anna Meyer
+Graphic user interface for Game of Life simulation, Software Design final project, Spring 2017
+-->
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.GridPane?>
 
