@@ -23,18 +23,21 @@ import java.util.TimerTask;
 
 
 public class Controller implements EventHandler<MouseEvent> {
-    final private double FRAMES_PER_SECOND = 20.0;
+    final private double FRAMES_PER_SECOND = 1.0;
 
     @FXML private Button pauseButton;
     @FXML private Button playButton;
     @FXML private Label timeKeeperLabel;
+    @FXML private Label scoreLabel;
+    @FXML private Button questionButton;
     @FXML private GridPane gameBoard;
 
     private int score; //number of boxes that are alive
+    private int time;
     private boolean paused;
+    private boolean helpBoxVisible;
     private Timer timer;
     private ArrayList<Box> BoxList = new ArrayList<Box>();
-//Make box extend node so that this'll work?
 
     private int numberOfRows = 20;
     private int numberOfCols = 40;
@@ -47,12 +50,15 @@ public class Controller implements EventHandler<MouseEvent> {
             }
         }
     }
+
     /**
      * Constructor
      */
     public Controller() {
         this.paused = true;
+        this.helpBoxVisible=false;
         this.score = 0;
+        this.time = 0;
     }
 
     /**
@@ -65,6 +71,7 @@ public class Controller implements EventHandler<MouseEvent> {
                 Platform.runLater(new Runnable() {
                     public void run() {
                         updateAnimation();
+                        time ++;
                     }
                 });
             }
@@ -95,6 +102,9 @@ public class Controller implements EventHandler<MouseEvent> {
                deadList.add(BoxList.get(i));
            }
         }
+        this.score = aliveList.size();
+        this.timeKeeperLabel.setText("Time: " + this.time);
+        this.scoreLabel.setText("Score: " + this.score);
         for (int j = 0; j < aliveList.size(); j++) {
             aliveList.get(j).changeLifeStatus(true);
             XPos = aliveList.get(j).getPositionX();
@@ -233,7 +243,12 @@ public class Controller implements EventHandler<MouseEvent> {
 
     private void colorSquareAlive(int XPos, int YPos) {
         javafx.scene.Node ourNode = findNodeByRowCol(YPos, XPos);
-        ourNode.setStyle("-fx-base: #b6e7c9");
+        ourNode.setStyle("-fx-base: #fa8072");
+    }
+
+    private void colorSquareDead(int XPos, int YPos) {
+        javafx.scene.Node ourNode = findNodeByRowCol(YPos, XPos);
+        ourNode.setStyle("-fx-base: #cccccc");
     }
 
     /**
@@ -262,10 +277,27 @@ public class Controller implements EventHandler<MouseEvent> {
      * @param click
      */
     @Override
+    @FXML
     public void handle(MouseEvent click) {
-        Double Xcoord = click.getScreenX();
-        Double Ycoord = click.getScreenY();
+        if (paused) {
+            this.time = 0;
+            this.timer.cancel();
+            javafx.scene.Node source = (javafx.scene.Node) click.getSource();
+            Integer col = gameBoard.getColumnIndex(source);
+            Integer row = gameBoard.getRowIndex(source);
+            int listIndex = (row * numberOfCols) + col;
+            Boolean lifeStatus = BoxList.get(listIndex).amIAlive();
+            if (lifeStatus) {
+                colorSquareDead(col, row);
+                BoxList.get(listIndex).changeLifeStatus(false);
+            } else {
+                colorSquareAlive(col, row);
+                BoxList.get(listIndex).changeLifeStatus(true);
+            }
+        }
     }
+
+
 
     /**
      * Pause the simulation
@@ -275,6 +307,7 @@ public class Controller implements EventHandler<MouseEvent> {
     public void onPauseButton(ActionEvent actionEvent) {
         if (!this.paused) {
             this.timer.cancel();
+            playButton.setStyle("-fx-base: f2f2f2");
         }
         this.paused = true;
     }
@@ -287,7 +320,19 @@ public class Controller implements EventHandler<MouseEvent> {
     public void onPlayButton(ActionEvent actionEvent) {
         if (this.paused) {
             this.startTimer();
+            playButton.setStyle("-fx-base: A9A9A9");
         }
         this.paused = false;
+    }
+
+    public void onQuestionButton(ActionEvent actionEvent) {
+        if (! helpBoxVisible) {
+            helpBoxVisible = true;
+            //show help box somehow
+        }
+        else {
+            helpBoxVisible = false;
+            // hide help box somehow
+        }
     }
 }
