@@ -13,8 +13,8 @@ import javafx.fxml.FXML;
 public class Box {
 
     @FXML private boolean alive;
-    @FXML private double positionX;
-    @FXML private double positionY;
+    @FXML private int positionX;
+    @FXML private int positionY;
 
     /**
      * Constructor
@@ -22,7 +22,7 @@ public class Box {
      * @param positionX column number
      * @param positionY row number
      */
-    public Box(double positionX, double positionY) {
+    public Box(int positionX, int positionY) {
         this.positionX = positionX;
         this.positionY = positionY;
         this.alive = false;
@@ -51,7 +51,7 @@ public class Box {
      *
      * @return numerical value corresponding to column number containing the box
      */
-    public double getPositionX() {
+    public int getPositionX() {
         return positionX;
     }
 
@@ -60,7 +60,7 @@ public class Box {
      *
      * @return numerical value corresponding to row number containing the box
      */
-    public double getPositionY() {
+    public int getPositionY() {
         return positionY;
     }
 }

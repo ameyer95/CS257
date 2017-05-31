@@ -36,12 +36,14 @@ public class Controller implements EventHandler<MouseEvent> {
     private ArrayList<Box> BoxList = new ArrayList<Box>();
 //Make box extend node so that this'll work?
 
+    private int numberOfRows = 20;
+    private int numberOfCols = 40;
 
     public void initialize() {
-        for (int row = 0; row < 20; row ++) {
-            for (int col = 0; col < 40; col ++) {
+        for (int row = 0; row < numberOfRows; row ++) {
+            for (int col = 0; col < numberOfCols; col ++) {
                 gameBoard.add(new Button(), col, row);
-                BoxList.add(new Box((double) col, (double) row));
+                BoxList.add(new Box(col, row));
             }
         }
     }
@@ -78,8 +80,182 @@ public class Controller implements EventHandler<MouseEvent> {
      */
     private void updateAnimation() {
         // check positions & neighbors and recolor boxes as necessary
+        ArrayList<Box> aliveList = new ArrayList<Box>();
+        ArrayList<Box> deadList = new ArrayList<Box>();
+        Boolean aliveBox;
+        int XPos;
+        int YPos;
+
+        for (int i=0; i < BoxList.size(); i++) {
+           aliveBox = findNeighbors(BoxList.get(i), i);
+           if (aliveBox) {
+               aliveList.add(BoxList.get(i));
+           }
+           else {
+               deadList.add(BoxList.get(i));
+           }
+        }
+        for (int j = 0; j < aliveList.size(); j++) {
+            aliveList.get(j).changeLifeStatus(true);
+            XPos = aliveList.get(j).getPositionX();
+            YPos = aliveList.get(j).getPositionY();
+            colorSquareAlive(XPos, YPos);
+        }
+        for (int k = 0; k < deadList.size(); k++) {
+            deadList.get(k).changeLifeStatus(false);
+            XPos = deadList.get(k).getPositionX();
+            YPos = deadList.get(k).getPositionY();
+            colorSquareDead(XPos, YPos);
+        }
     }
 
+    private Boolean findNeighbors(Box thisBox, int i) {
+        int numberOfNeighborsAlive = 0;
+        ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
+        listOfNeighbors.addAll(findSideNeighbors(i));
+        listOfNeighbors.addAll(findAboveNeighbors(i));
+        listOfNeighbors.addAll(findBelowNeighbors(i));
+
+        for (int j = 0; j < listOfNeighbors.size(); j++) {
+            if (BoxList.get(j).amIAlive()) {
+                numberOfNeighborsAlive ++;
+            }
+        }
+
+        Boolean lifeStatus = thisBox.amIAlive();
+        if (numberOfNeighborsAlive < 2) {
+            return false;
+        }
+        else if (numberOfNeighborsAlive > 3) {
+            return false;
+        }
+        else if (numberOfNeighborsAlive == 3 ) {
+            return true;
+        }
+        return lifeStatus;
+    }
+
+
+    private ArrayList<Integer> findSideNeighbors(int i) {
+        ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
+        if ((i % numberOfCols) == 0) {
+            listOfNeighbors.addAll(leftColumnSpecialCase(i));
+        }
+        else if ((i % numberOfCols) == (numberOfCols -1 )) {
+            listOfNeighbors.addAll(rightColumnSpecialCase(i));
+        }
+        else {
+            listOfNeighbors.add(i-1);
+            listOfNeighbors.add(i+1);
+        }
+        return listOfNeighbors;
+    }
+
+    private ArrayList<Integer> leftColumnSpecialCase(int i) {
+        ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
+        listOfNeighbors.add(i+1);
+        listOfNeighbors.add(i + (numberOfCols -1));
+        return listOfNeighbors;
+    }
+
+    private ArrayList<Integer> rightColumnSpecialCase(int i) {
+        ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
+        listOfNeighbors.add(i-1);
+        listOfNeighbors.add(i - (numberOfCols -1));
+        return listOfNeighbors;
+    }
+
+    private ArrayList<Integer> findAboveNeighbors(int i) {
+        ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
+        if ((i % numberOfCols) == 0) {
+            if (i >= numberOfCols) {
+                listOfNeighbors.addAll(leftColumnSpecialCase(i - numberOfCols));
+            }
+            else {
+                listOfNeighbors.addAll(leftColumnSpecialCase(numberOfCols * (numberOfRows - 1)));
+            }
+        }
+        else if ((i % numberOfCols) == (numberOfCols - 1)) {
+            if (i > numberOfCols) {
+                listOfNeighbors.addAll(rightColumnSpecialCase(i - numberOfCols));
+            }
+            else {
+                listOfNeighbors.addAll(rightColumnSpecialCase(numberOfCols * numberOfRows - 1));
+            }
+        }
+        else {
+            if (i < numberOfCols) {
+                listOfNeighbors.add(i + (numberOfCols * (numberOfRows - 1)));
+                listOfNeighbors.add(i + 1 + (numberOfCols * (numberOfRows - 1)));
+                listOfNeighbors.add(i - 1 + (numberOfCols * (numberOfRows - 1)));
+            }
+            else {
+                listOfNeighbors.add(i - numberOfCols);
+                listOfNeighbors.add(i - 1 - numberOfCols);
+                listOfNeighbors.add(i + 1 - numberOfCols);
+            }
+        }
+        return listOfNeighbors;
+    }
+
+    private ArrayList<Integer> findBelowNeighbors(int i) {
+        ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
+        if ((i % numberOfCols) == 0) {
+            if (i < (numberOfCols*(numberOfRows - 1))) {
+                listOfNeighbors.addAll(leftColumnSpecialCase(i + numberOfCols));
+            }
+            else {
+                listOfNeighbors.addAll(leftColumnSpecialCase(i % numberOfCols));
+            }
+        }
+        else if ((i % numberOfCols) == (numberOfCols - 1)) {
+            if (i < (numberOfCols * (numberOfRows - 1))) {
+                listOfNeighbors.addAll(rightColumnSpecialCase(i + numberOfCols));
+            }
+            else {
+                listOfNeighbors.addAll(rightColumnSpecialCase(i % numberOfCols));
+            }
+        }
+        else {
+            if (i >= numberOfCols * (numberOfRows-1)) {
+                listOfNeighbors.add((i % numberOfCols));
+                listOfNeighbors.add((i % numberOfCols) + 1);
+                listOfNeighbors.add((i % numberOfCols) - 1);
+            }
+            else {
+                listOfNeighbors.add(i + numberOfCols);
+                listOfNeighbors.add(i + 1 + numberOfCols);
+                listOfNeighbors.add(i - 1 + numberOfCols);
+            }
+        }
+        return listOfNeighbors;
+    }
+
+    private void colorSquareAlive(int XPos, int YPos) {
+        javafx.scene.Node ourNode = findNodeByRowCol(YPos, XPos);
+        ourNode.setStyle("-fx-base: #b6e7c9");
+    }
+
+    /**
+     * We found this technique on
+     * https://stackoverflow.com/questions/20825935/javafx-get-node-by-row-and-column
+     *
+     * @param row
+     * @param col
+     * @return the node corresponding to the box that we're changing to alive or dead
+     */
+    private javafx.scene.Node findNodeByRowCol(int row, int col) {
+        javafx.scene.Node result = null;
+        javafx.collections.ObservableList<javafx.scene.Node> children = gameBoard.getChildren();
+
+        for (javafx.scene.Node node : children) {
+            if(gameBoard.getRowIndex(node) == row && gameBoard.getColumnIndex(node) == col) {
+                result = node;
+                break;
+            }
+        }
+        return result;
+    }
     /**
      * Interprets when the user clicks on the screen
      *
