@@ -23,13 +23,14 @@ Graphic user interface for Game of Life simulation, Software Design final projec
 
     <Label fx:id="scoreLabel" AnchorPane.leftAnchor="150" AnchorPane.topAnchor="30" />
 
-    <fx:define>
-        <Image fx:id="questionIcon" url="images/image.png" />
-    </fx:define>
+
 
     <Button fx:id="questionButton" AnchorPane.rightAnchor="30" AnchorPane.topAnchor="15" prefHeight="45" prefWidth="45" onAction="#onQuestionButton">
         <graphic>
-            <ImageView image="questionIcon" />
+            <ImageView>
+                <image>
+                    <Image url="@images/image.png" /> </image>
+            </ImageView>
         </graphic>
     </Button>
 
