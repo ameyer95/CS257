@@ -25,11 +25,10 @@ Graphic user interface for Game of Life simulation, Software Design final projec
 
 
 
-    <Button fx:id="questionButton" AnchorPane.rightAnchor="30" AnchorPane.topAnchor="15" prefHeight="45" prefWidth="45" onAction="#onQuestionButton">
+    <Button fx:id="questionButton" AnchorPane.rightAnchor="30" AnchorPane.topAnchor="15" onAction="#onQuestionButton">
         <graphic>
-            <ImageView>
-                <image>
-                    <Image url="@images/image.png" /> </image>
+            <ImageView fitHeight="25" fitWidth="25">
+                <Image url="@images/image.png"/>
             </ImageView>
         </graphic>
     </Button>
