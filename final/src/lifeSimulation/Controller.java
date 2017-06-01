@@ -16,7 +16,10 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import java.util.ArrayList;
+
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -123,8 +126,8 @@ public class Controller implements EventHandler<MouseEvent> {
         ArrayList<Integer> aliveList = new ArrayList<Integer>();
         ArrayList<Integer> deadList = new ArrayList<Integer>();
         Boolean aliveBox;
-        int XPos;
-        int YPos;
+        int col;
+        int row;
 
         for (int i=0; i < BoxList.size(); i++) {
             aliveBox = findNeighbors(BoxList.get(i), i);
@@ -140,15 +143,15 @@ public class Controller implements EventHandler<MouseEvent> {
         this.scoreLabel.setText("Score: " + this.score);
         for (int j = 0; j < aliveList.size(); j++) {
             BoxList.set(aliveList.get(j),true);
-            XPos = aliveList.get(j) % numberOfCols;
-            YPos = (aliveList.get(j) - XPos) / numberOfRows;
-            colorSquareAlive(XPos, YPos);
+            col = aliveList.get(j) % numberOfCols;
+            row = (aliveList.get(j) - col) / numberOfRows;
+            colorSquareAlive(row, col);
         }
         for (int k = 0; k < deadList.size(); k++) {
             BoxList.set(deadList.get(k), false);
-            XPos = deadList.get(k) % numberOfCols;
-            YPos = (deadList.get(k) - XPos) / numberOfRows;
-            colorSquareDead(XPos, YPos);
+            col = deadList.get(k) % numberOfCols;
+            row = (deadList.get(k) - col) / numberOfRows;
+            colorSquareDead(row, col);
         }
     }
 
@@ -274,13 +277,44 @@ public class Controller implements EventHandler<MouseEvent> {
         return listOfNeighbors;
     }
 
-    private void colorSquareAlive(int XPos, int YPos) {
-        //javafx.scene.Node ourNode = findNodeByRowCol(YPos, XPos);
-        //ourNode.setStyle("-fx-base: #fa8072");
+    @FXML
+    private void colorSquareAlive(int row, int col) {
+        Rectangle box = new Rectangle();
+        box.setX(row*(gameBoardWidth/numberOfRows));
+        box.setY(col*(gameBoardHeight/numberOfCols));
+        box.setWidth(boxWidth);
+        box.setHeight(boxWidth);
+        box.setFill(Color.DARKCYAN);
+        box.setStroke(Color.BLACK);
+        gameBoard.getChildren().add(box);
+        BoxList.set(row*numberOfCols+col, true);
     }
+        /** Maybe the following could be done to delete a node when we replace it?
+        for (int i=0; i<(numberOfCols*numberOfRows+numberOfRows+numberOfCols);i++) {
+            if (gameBoard.getChildren().get(i).getLayoutX()==row) {
+                if (gameBoard.getChildren().get(i).getLayoutY()==col) {
+                    gameBoard.getChildren().get(i).setFill(Color.DEEPPINK);
+                }
+                    break;
+                }
+            }
+        }
+         */
+        //javafx.scene.Node ourNode = findNodeByRowCol(row, col);
+        //ourNode.setStyle("-fx-base: #fa8072");
 
-    private void colorSquareDead(int XPos, int YPos) {
-        //javafx.scene.Node ourNode = findNodeByRowCol(YPos, XPos);
+
+    private void colorSquareDead(int row, int col) {
+        Rectangle box = new Rectangle();
+        box.setX(row*(gameBoardWidth/numberOfRows));
+        box.setY(col*(gameBoardHeight/numberOfCols));
+        box.setWidth(boxWidth);
+        box.setHeight(boxWidth);
+        box.setFill(Color.LIGHTGRAY);
+        box.setStroke(Color.BLACK);
+        gameBoard.getChildren().add(box);
+        BoxList.set(row*numberOfCols+col, false);
+        //javafx.scene.Node ourNode = findNodeByRowCol(row, col);
         //ourNode.setStyle("-fx-base: #cccccc");
     }
 
