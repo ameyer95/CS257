@@ -15,8 +15,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import java.util.ArrayList;
+import javafx.scene.shape.Line;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -30,25 +30,58 @@ public class Controller implements EventHandler<MouseEvent> {
     @FXML private Label timeKeeperLabel;
     @FXML private Label scoreLabel;
     @FXML private Button questionButton;
-    @FXML private GridPane gameBoard;
+    @FXML private AnchorPane gameBoard;
 
     private int score; //number of boxes that are alive
-    private int time;
+    private int time = 0;
     private boolean paused;
     private boolean helpBoxVisible;
     private Timer timer;
-    private ArrayList<Box> BoxList = new ArrayList<Box>();
 
-    private int numberOfRows = 20;
-    private int numberOfCols = 40;
+    // This is the Model
+    private ArrayList<Boolean> BoxList = new ArrayList<Boolean>();
+
+    private int numberOfRows = 30;
+    private int numberOfCols = 30;
+
+    private int gameBoardWidth = 600;     //get from Main() window width
+    private int gameBoardHeight = 600;    // get from Main() window height - top AnchorPane in FXML file
+    private double boxWidth = gameBoardWidth / numberOfRows;
 
     public void initialize() {
+        //draw vertical lines on gameBoard
+        for (int col = 1; col < numberOfCols; col++){
+            Line line = new Line();
+            line.setStartX(col * boxWidth);
+            line.setStartY(0);
+            line.setEndX(col * boxWidth);
+            line.setStartY(gameBoardHeight);
+            gameBoard.getChildren().add(line);
+        }
+
+        //draw horizontal lines on gameBoard
+        for (int row = 1; row < numberOfRows; row++){
+            Line line = new Line();
+            line.setStartX(0);
+            line.setStartY(row * boxWidth);
+            line.setEndX(gameBoardWidth);
+            line.setEndY(row * boxWidth);
+            gameBoard.getChildren().add(line);
+        }
+
+        //create list of boxes, initialize to be dead
         for (int row = 0; row < numberOfRows; row ++) {
             for (int col = 0; col < numberOfCols; col ++) {
-                gameBoard.add(new Button(), col, row);
-                BoxList.add(new Box(col, row));
+                BoxList.add(false);
             }
         }
+
+        gameBoard.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                handleClick(event);
+            }
+        });
     }
 
     /**
@@ -87,39 +120,39 @@ public class Controller implements EventHandler<MouseEvent> {
      */
     private void updateAnimation() {
         // check positions & neighbors and recolor boxes as necessary
-        ArrayList<Box> aliveList = new ArrayList<Box>();
-        ArrayList<Box> deadList = new ArrayList<Box>();
+        ArrayList<Integer> aliveList = new ArrayList<Integer>();
+        ArrayList<Integer> deadList = new ArrayList<Integer>();
         Boolean aliveBox;
         int XPos;
         int YPos;
 
         for (int i=0; i < BoxList.size(); i++) {
-           aliveBox = findNeighbors(BoxList.get(i), i);
-           if (aliveBox) {
-               aliveList.add(BoxList.get(i));
-           }
-           else {
-               deadList.add(BoxList.get(i));
-           }
+            aliveBox = findNeighbors(BoxList.get(i), i);
+            if (aliveBox) {
+                aliveList.add(i);
+            }
+            else {
+                deadList.add(i);
+            }
         }
         this.score = aliveList.size();
         this.timeKeeperLabel.setText("Time: " + this.time);
         this.scoreLabel.setText("Score: " + this.score);
         for (int j = 0; j < aliveList.size(); j++) {
-            aliveList.get(j).changeLifeStatus(true);
-            XPos = aliveList.get(j).getPositionX();
-            YPos = aliveList.get(j).getPositionY();
+            BoxList.set(aliveList.get(j),true);
+            XPos = aliveList.get(j) % numberOfCols;
+            YPos = (aliveList.get(j) - XPos) / numberOfRows;
             colorSquareAlive(XPos, YPos);
         }
         for (int k = 0; k < deadList.size(); k++) {
-            deadList.get(k).changeLifeStatus(false);
-            XPos = deadList.get(k).getPositionX();
-            YPos = deadList.get(k).getPositionY();
+            BoxList.set(deadList.get(k), false);
+            XPos = deadList.get(k) % numberOfCols;
+            YPos = (deadList.get(k) - XPos) / numberOfRows;
             colorSquareDead(XPos, YPos);
         }
     }
 
-    private Boolean findNeighbors(Box thisBox, int i) {
+    private Boolean findNeighbors(boolean alive, int i) {
         int numberOfNeighborsAlive = 0;
         ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
         listOfNeighbors.addAll(findSideNeighbors(i));
@@ -127,12 +160,12 @@ public class Controller implements EventHandler<MouseEvent> {
         listOfNeighbors.addAll(findBelowNeighbors(i));
 
         for (int j = 0; j < listOfNeighbors.size(); j++) {
-            if (BoxList.get(j).amIAlive()) {
+            if (BoxList.get(j)) {
                 numberOfNeighborsAlive ++;
             }
         }
 
-        Boolean lifeStatus = thisBox.amIAlive();
+        Boolean lifeStatus = alive;
         if (numberOfNeighborsAlive < 2) {
             return false;
         }
@@ -242,13 +275,13 @@ public class Controller implements EventHandler<MouseEvent> {
     }
 
     private void colorSquareAlive(int XPos, int YPos) {
-        javafx.scene.Node ourNode = findNodeByRowCol(YPos, XPos);
-        ourNode.setStyle("-fx-base: #fa8072");
+        //javafx.scene.Node ourNode = findNodeByRowCol(YPos, XPos);
+        //ourNode.setStyle("-fx-base: #fa8072");
     }
 
     private void colorSquareDead(int XPos, int YPos) {
-        javafx.scene.Node ourNode = findNodeByRowCol(YPos, XPos);
-        ourNode.setStyle("-fx-base: #cccccc");
+        //javafx.scene.Node ourNode = findNodeByRowCol(YPos, XPos);
+        //ourNode.setStyle("-fx-base: #cccccc");
     }
 
     /**
@@ -259,8 +292,7 @@ public class Controller implements EventHandler<MouseEvent> {
      * @param col
      * @return the node corresponding to the box that we're changing to alive or dead
      */
-    private javafx.scene.Node findNodeByRowCol(int row, int col) {
-        javafx.scene.Node result = null;
+    /*private boolean findBoxByRowCol(int row, int col) {
         javafx.collections.ObservableList<javafx.scene.Node> children = gameBoard.getChildren();
 
         for (javafx.scene.Node node : children) {
@@ -271,30 +303,32 @@ public class Controller implements EventHandler<MouseEvent> {
         }
         return result;
     }
-    /**
-     * Interprets when the user clicks on the screen
-     *
-     * @param click
-     */
+    */
+
+
+
     @Override
     @FXML
     public void handle(MouseEvent click) {
+      //for some reason we need this to run
+    }
+
+    public void handleClick(MouseEvent click) {
+        int row = (int) ((click.getY()- click.getY() % boxWidth) / ((int)boxWidth));
+        int col = (int) ((click.getX() - click.getX() % boxWidth) / ((int)boxWidth));
         if (paused) {
             this.time = 0;
-            this.timer.cancel();
-            javafx.scene.Node source = (javafx.scene.Node) click.getSource();
-            Integer col = gameBoard.getColumnIndex(source);
-            Integer row = gameBoard.getRowIndex(source);
             int listIndex = (row * numberOfCols) + col;
-            Boolean lifeStatus = BoxList.get(listIndex).amIAlive();
+            Boolean lifeStatus = BoxList.get(listIndex);
             if (lifeStatus) {
                 colorSquareDead(col, row);
-                BoxList.get(listIndex).changeLifeStatus(false);
+                BoxList.set(listIndex, false);
             } else {
                 colorSquareAlive(col, row);
-                BoxList.get(listIndex).changeLifeStatus(true);
+                BoxList.set(listIndex, true);
             }
         }
+        System.out.println("row: "+ row + " col: " + col);
     }
 
 
@@ -336,3 +370,7 @@ public class Controller implements EventHandler<MouseEvent> {
         }
     }
 }
+
+
+
+

@@ -33,10 +33,10 @@ Graphic user interface for Game of Life simulation, Software Design final projec
         </graphic>
     </Button>
 
-    <GridPane fx:id="gameBoard"
+    <AnchorPane fx:id="gameBoard"
            AnchorPane.topAnchor="60" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
                 style="-fx-background-color: #bbb; -fx-border-color:black; -fx-border-width:1px 0px 1px 0px;">
 
 
-    </GridPane>
+    </AnchorPane>
 </AnchorPane>
