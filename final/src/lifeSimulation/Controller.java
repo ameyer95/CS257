@@ -26,7 +26,7 @@ import java.util.TimerTask;
 
 
 public class Controller implements EventHandler<MouseEvent> {
-    final private double FRAMES_PER_SECOND = 1.0;
+    final private double FRAMES_PER_SECOND = 2.0;
 
     @FXML private Button pauseButton;
     @FXML private Button playButton;
@@ -139,8 +139,8 @@ public class Controller implements EventHandler<MouseEvent> {
             }
         }
         this.score = aliveList.size();
-        this.timeKeeperLabel.setText("Time: " + this.time);
-        this.scoreLabel.setText("Score: " + this.score);
+        this.timeKeeperLabel.setText("Generation: " + this.time);
+        this.scoreLabel.setText("Population: " + this.score);
         for (int j = 0; j < aliveList.size(); j++) {
             BoxList.set(aliveList.get(j),true);
             col = aliveList.get(j) % numberOfCols;
@@ -163,7 +163,7 @@ public class Controller implements EventHandler<MouseEvent> {
         listOfNeighbors.addAll(findBelowNeighbors(i));
 
         for (int j = 0; j < listOfNeighbors.size(); j++) {
-            if (BoxList.get(j)) {
+            if (BoxList.get(listOfNeighbors.get(j))) {
                 numberOfNeighborsAlive ++;
             }
         }
@@ -362,7 +362,6 @@ public class Controller implements EventHandler<MouseEvent> {
                 BoxList.set(listIndex, true);
             }
         }
-        System.out.println("row: "+ row + " col: " + col);
     }
 
 
