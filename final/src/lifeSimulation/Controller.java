@@ -280,8 +280,8 @@ public class Controller implements EventHandler<MouseEvent> {
     @FXML
     private void colorSquareAlive(int row, int col) {
         Rectangle box = new Rectangle();
-        box.setX(row*(gameBoardWidth/numberOfRows));
-        box.setY(col*(gameBoardHeight/numberOfCols));
+        box.setY(row*(gameBoardWidth/numberOfRows));
+        box.setX(col*(gameBoardHeight/numberOfCols));
         box.setWidth(boxWidth);
         box.setHeight(boxWidth);
         box.setFill(Color.DARKCYAN);
@@ -306,8 +306,8 @@ public class Controller implements EventHandler<MouseEvent> {
 
     private void colorSquareDead(int row, int col) {
         Rectangle box = new Rectangle();
-        box.setX(row*(gameBoardWidth/numberOfRows));
-        box.setY(col*(gameBoardHeight/numberOfCols));
+        box.setY(row*(gameBoardWidth/numberOfRows));
+        box.setX(col*(gameBoardHeight/numberOfCols));
         box.setWidth(boxWidth);
         box.setHeight(boxWidth);
         box.setFill(Color.LIGHTGRAY);
@@ -355,10 +355,10 @@ public class Controller implements EventHandler<MouseEvent> {
             int listIndex = (row * numberOfCols) + col;
             Boolean lifeStatus = BoxList.get(listIndex);
             if (lifeStatus) {
-                colorSquareDead(col, row);
+                colorSquareDead(row, col);
                 BoxList.set(listIndex, false);
             } else {
-                colorSquareAlive(col, row);
+                colorSquareAlive(row, col);
                 BoxList.set(listIndex, true);
             }
         }
