@@ -11,7 +11,7 @@ Graphic user interface for Game of Life simulation, Software Design final projec
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.image.*?>
-
+<?import javafx.scene.text.Text?>
 
 <AnchorPane fx:controller="lifeSimulation.Controller" xmlns:fx="http://javafx.com/fxml">
 
@@ -23,7 +23,7 @@ Graphic user interface for Game of Life simulation, Software Design final projec
 
     <Label fx:id="scoreLabel" AnchorPane.leftAnchor="150" AnchorPane.topAnchor="30" />
 
-
+    <Text fx:id="helpSection" AnchorPane.leftAnchor="170" AnchorPane.topAnchor="30" />
 
     <Button fx:id="questionButton" AnchorPane.rightAnchor="30" AnchorPane.topAnchor="15" onAction="#onQuestionButton">
         <graphic>
