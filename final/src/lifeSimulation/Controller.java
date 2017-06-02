@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,6 +33,7 @@ public class Controller implements EventHandler<MouseEvent> {
     @FXML private Button playButton;
     @FXML private Label timeKeeperLabel;
     @FXML private Label scoreLabel;
+    @FXML private Text helpSection;
     @FXML private Button questionButton;
     @FXML private AnchorPane gameBoard;
 
@@ -45,11 +47,11 @@ public class Controller implements EventHandler<MouseEvent> {
     private ArrayList<Boolean> BoxList = new ArrayList<Boolean>();
 
     private int numberOfRows = 30;
-    private int numberOfCols = 30;
+    private int numberOfCols = 40;
 
-    private int gameBoardWidth = 600;     //get from Main() window width
+    private int gameBoardWidth = 800;     //get from Main() window width
     private int gameBoardHeight = 600;    // get from Main() window height - top AnchorPane in FXML file
-    private double boxWidth = gameBoardWidth / numberOfRows;
+    private double boxWidth = gameBoardWidth / numberOfCols;
 
     public void initialize() {
         //draw vertical lines on gameBoard
@@ -59,6 +61,7 @@ public class Controller implements EventHandler<MouseEvent> {
             line.setStartY(0);
             line.setEndX(col * boxWidth);
             line.setStartY(gameBoardHeight);
+            line.setId("lineCol" + col);
             gameBoard.getChildren().add(line);
         }
 
@@ -69,12 +72,23 @@ public class Controller implements EventHandler<MouseEvent> {
             line.setStartY(row * boxWidth);
             line.setEndX(gameBoardWidth);
             line.setEndY(row * boxWidth);
+            line.setId("lineRow" + row);
             gameBoard.getChildren().add(line);
         }
 
         //create list of boxes, initialize to be dead
         for (int row = 0; row < numberOfRows; row ++) {
             for (int col = 0; col < numberOfCols; col ++) {
+                Rectangle box = new Rectangle();
+                box.setY(row*(gameBoardWidth/numberOfCols));
+                box.setX(col*(gameBoardHeight/numberOfRows));
+                box.setWidth(boxWidth);
+                box.setHeight(boxWidth);
+                box.setFill(Color.LIGHTGRAY);
+                box.setStroke(Color.BLACK);
+                box.setId(row + "_" + col);
+                //box.setStyle("-fx-fill: palevioletred");
+                gameBoard.getChildren().add(box);
                 BoxList.add(false);
             }
         }
@@ -144,13 +158,13 @@ public class Controller implements EventHandler<MouseEvent> {
         for (int j = 0; j < aliveList.size(); j++) {
             BoxList.set(aliveList.get(j),true);
             col = aliveList.get(j) % numberOfCols;
-            row = (aliveList.get(j) - col) / numberOfRows;
+            row = (aliveList.get(j) - col) / numberOfCols;
             colorSquareAlive(row, col);
         }
         for (int k = 0; k < deadList.size(); k++) {
             BoxList.set(deadList.get(k), false);
             col = deadList.get(k) % numberOfCols;
-            row = (deadList.get(k) - col) / numberOfRows;
+            row = (deadList.get(k) - col) / numberOfCols;
             colorSquareDead(row, col);
         }
     }
@@ -279,44 +293,29 @@ public class Controller implements EventHandler<MouseEvent> {
 
     @FXML
     private void colorSquareAlive(int row, int col) {
-        Rectangle box = new Rectangle();
-        box.setY(row*(gameBoardWidth/numberOfRows));
-        box.setX(col*(gameBoardHeight/numberOfCols));
-        box.setWidth(boxWidth);
-        box.setHeight(boxWidth);
-        box.setFill(Color.DARKCYAN);
-        box.setStroke(Color.BLACK);
-        gameBoard.getChildren().add(box);
-        BoxList.set(row*numberOfCols+col, true);
-    }
-        /** Maybe the following could be done to delete a node when we replace it?
-        for (int i=0; i<(numberOfCols*numberOfRows+numberOfRows+numberOfCols);i++) {
-            if (gameBoard.getChildren().get(i).getLayoutX()==row) {
-                if (gameBoard.getChildren().get(i).getLayoutY()==col) {
-                    gameBoard.getChildren().get(i).setFill(Color.DEEPPINK);
-                }
-                    break;
-                }
+        BoxList.set((row*numberOfCols)+col, true);
+        String ourId = row + "_" + col;
+        for (int i=0; i<((numberOfCols*numberOfRows)+numberOfRows+numberOfCols-2);i++) {
+            if (gameBoard.getChildren().get(i).getId().equals(ourId)) {
+                gameBoard.getChildren().get(i).setStyle("-fx-fill: palevioletred");
+                break;
             }
         }
-         */
-        //javafx.scene.Node ourNode = findNodeByRowCol(row, col);
-        //ourNode.setStyle("-fx-base: #fa8072");
+    }
 
 
     private void colorSquareDead(int row, int col) {
-        Rectangle box = new Rectangle();
-        box.setY(row*(gameBoardWidth/numberOfRows));
-        box.setX(col*(gameBoardHeight/numberOfCols));
-        box.setWidth(boxWidth);
-        box.setHeight(boxWidth);
-        box.setFill(Color.LIGHTGRAY);
-        box.setStroke(Color.BLACK);
-        gameBoard.getChildren().add(box);
-        BoxList.set(row*numberOfCols+col, false);
-        //javafx.scene.Node ourNode = findNodeByRowCol(row, col);
-        //ourNode.setStyle("-fx-base: #cccccc");
+        String ourId = row + "_"+ col;
+        BoxList.set((row*numberOfCols)+col, false);
+        for (int i=0; i<((numberOfCols*numberOfRows)+numberOfRows+numberOfCols-2);i++) {
+            if (gameBoard.getChildren().get(i).getId().equals(ourId)) {
+                gameBoard.getChildren().get(i).setStyle("-fx-fill: lightgrey");
+                break;
+            }
+        }
     }
+
+
 
     /**
      * We found this technique on
@@ -348,6 +347,10 @@ public class Controller implements EventHandler<MouseEvent> {
     }
 
     public void handleClick(MouseEvent click) {
+        if (helpBoxVisible) {
+            //hide help box somehow
+            helpBoxVisible = false;
+        }
         int row = (int) ((click.getY()- click.getY() % boxWidth) / ((int)boxWidth));
         int col = (int) ((click.getX() - click.getX() % boxWidth) / ((int)boxWidth));
         if (paused) {
@@ -394,10 +397,23 @@ public class Controller implements EventHandler<MouseEvent> {
 
     public void onQuestionButton(ActionEvent actionEvent) {
         if (! helpBoxVisible) {
+            //this.helpSection.setText("Welcome to the Game of Life. To begin playing, click on any set of boxes." +
+             //               "When you press play, a simulation will begin. If a box is 'alive', then it will stay alive if it's next to 2 or 3 other 'alive' boxes. If a box " +
+             //       "is dead, it will become alive if it has exactly 3 live neighbors. You can press Pause to look at a particular configuration or add more alive boxes " +
+              //              "(but doing this will restart the generation timer). The arrow at the bottom of the screen toggles a graph that shows population of the cells over time " +
+              //      "as the simulation is taking place.");
+            this.helpSection.setWrappingWidth(200);
+            this.helpSection.setText("Welcome to the Game of Life. To begin playing, click on any set of boxes. " +
+                            "When you press play, a simulation will begin. If a box is 'alive', then it will stay alive if it's next to 2 or 3 other " +
+                    "'alive' boxes. If a box is dead, it will become alive if it has exactly 3 live neighbors. You can press Pause to look at a particular " +
+                    "configuration or add more alive boxes (but doing this will restart the generation timer). The arrow at the bottom of the screen toggles " +
+                            "a graph that shows population of the cells over time as the simulation is taking place.");
             helpBoxVisible = true;
+
             //show help box somehow
         }
         else {
+            this.helpSection.setText("");
             helpBoxVisible = false;
             // hide help box somehow
         }
