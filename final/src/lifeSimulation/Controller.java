@@ -31,6 +31,7 @@ public class Controller implements EventHandler<MouseEvent> {
 
     @FXML private Button pauseButton;
     @FXML private Button playButton;
+    @FXML private Button resetButton;
     @FXML private Label timeKeeperLabel;
     @FXML private Label scoreLabel;
     @FXML private Text helpSection;
@@ -392,6 +393,18 @@ public class Controller implements EventHandler<MouseEvent> {
             playButton.setStyle("-fx-base: A9A9A9");
         }
         this.paused = false;
+    }
+
+    @FXML
+    public void onResetButton(ActionEvent actionEvent) {
+        if (!this.paused) {
+            this.timer.cancel();
+        }
+        this.paused = true;
+        for (int i=0; i<BoxList.size(); i++) {
+            BoxList.set(i, false);
+            gameBoard.getChildren().get(i+numberOfCols+numberOfRows-2).setStyle("-fx-fill: lightgrey");
+        }
     }
 
     public void onQuestionButton(ActionEvent actionEvent) {

@@ -15,13 +15,15 @@ Graphic user interface for Game of Life simulation, Software Design final projec
 
 <AnchorPane fx:controller="lifeSimulation.Controller" xmlns:fx="http://javafx.com/fxml">
 
-    <Button fx:id="pauseButton" text="Pause" AnchorPane.leftAnchor="30" AnchorPane.topAnchor="15" onAction="#onPauseButton"/>
+    <Button fx:id="resetButton" text="Reset" AnchorPane.leftAnchor="30" AnchorPane.topAnchor="15" onAction="#onResetButton"/>
 
-    <Button fx:id="playButton" text="Play" AnchorPane.leftAnchor="90" AnchorPane.topAnchor="15" onAction="#onPlayButton"/>
+    <Button fx:id="pauseButton" text="Pause" AnchorPane.leftAnchor="90" AnchorPane.topAnchor="15" onAction="#onPauseButton"/>
 
-    <Label fx:id="timeKeeperLabel" AnchorPane.leftAnchor="150" AnchorPane.topAnchor="15" />
+    <Button fx:id="playButton" text="Play" AnchorPane.leftAnchor="150" AnchorPane.topAnchor="15" onAction="#onPlayButton"/>
 
-    <Label fx:id="scoreLabel" AnchorPane.leftAnchor="150" AnchorPane.topAnchor="30" />
+    <Label fx:id="timeKeeperLabel" AnchorPane.leftAnchor="210" AnchorPane.topAnchor="15" />
+
+    <Label fx:id="scoreLabel" AnchorPane.leftAnchor="210" AnchorPane.topAnchor="30" />
 
     <Text fx:id="helpSection" AnchorPane.leftAnchor="170" AnchorPane.topAnchor="30" />
 
