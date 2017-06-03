@@ -32,7 +32,7 @@ Graphic user interface for Game of Life simulation, Software Design final projec
     If a box is dead, it will become alive if it has exactly 3 live neighbors.
     You can press Pause to look at a particular configuration or add more alive boxes (but doing this will restart the generation timer).
     The arrow at the bottom of the screen toggles a graph that shows population of the cells over time as the simulation is taking place.
-    Press the question button again to close this box." />
+    Click anywhere on the board to close this box." wrappingWidth="266"/>
 
     <Rectangle fx:id="helpRectangle" AnchorPane.leftAnchor="240" AnchorPane.topAnchor="90" width = "280" height = "230" fill="azure"/>
 

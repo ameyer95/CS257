@@ -89,7 +89,6 @@ public class Controller implements EventHandler<MouseEvent> {
                 box.setFill(Color.LIGHTGRAY);
                 box.setStroke(Color.BLACK);
                 box.setId(row + "_" + col);
-                //box.setStyle("-fx-fill: palevioletred");
                 gameBoard.getChildren().add(box);
                 BoxList.add(false);
             }
@@ -171,6 +170,12 @@ public class Controller implements EventHandler<MouseEvent> {
         }
     }
 
+    /**
+     * Counts the number of i's neighbors who are alive and specifies the color of i for the next generation accordingly
+     * @param alive includes the current life status of cell i to simplify the case where i has 2 alive neighbors
+     * @param i the index in BoxList of the cell
+     * @return boolean value specifying the lifeStatus of cell i in the next generation of the simulation
+     */
     private Boolean findNeighbors(boolean alive, int i) {
         int numberOfNeighborsAlive = 0;
         ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
@@ -196,7 +201,13 @@ public class Controller implements EventHandler<MouseEvent> {
         return lifeStatus;
     }
 
-
+    /**
+     * Finds the index of the cells directly to the left and right of the cell
+     * that is in position BoxList[i]
+     * @param i index of our cell in BoxList
+     * @return a list of integers where each integer corresponds to the index
+     * in BoxList of one of i's neighbors
+     */
     private ArrayList<Integer> findSideNeighbors(int i) {
         ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
         if ((i % numberOfCols) == 0) {
@@ -212,6 +223,12 @@ public class Controller implements EventHandler<MouseEvent> {
         return listOfNeighbors;
     }
 
+    /**
+     * Handles finding the neighbors of cell i when i is in the left-most column
+     * @param i index in BoxList of the cell we are finding neighbors of
+     * @return a list of integers where each integer corresponds to the index in
+     * BoxList of one of i's neighbors
+     */
     private ArrayList<Integer> leftColumnSpecialCase(int i) {
         ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
         listOfNeighbors.add(i+1);
@@ -219,6 +236,12 @@ public class Controller implements EventHandler<MouseEvent> {
         return listOfNeighbors;
     }
 
+    /**
+     * Handles finding the neighbors of cell i when i is in the right-most column
+     * @param i index in BoxList of the cell we are finding neighbors of
+     * @return a list of integers where each integer corresponds to the index in
+     * BoxList of one of i's neighbors.
+     */
     private ArrayList<Integer> rightColumnSpecialCase(int i) {
         ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
         listOfNeighbors.add(i-1);
@@ -226,6 +249,12 @@ public class Controller implements EventHandler<MouseEvent> {
         return listOfNeighbors;
     }
 
+    /**
+     * Find the 3 boxes that are the neighbors of cell i in the row above.
+     * @param i the index in BoxList of the cell whose neighbors we are finding
+     * @return a list of integers where each integer corresponds to the position within
+     * BoxList of one of i's neighbors.
+     */
     private ArrayList<Integer> findAboveNeighbors(int i) {
         ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
         if ((i % numberOfCols) == 0) {
@@ -259,6 +288,12 @@ public class Controller implements EventHandler<MouseEvent> {
         return listOfNeighbors;
     }
 
+    /**
+     * Find the 3 boxes that are the neighbors of cell i in the row below.
+     * @param i index in BoxList of the cell whose neighbors we want to find
+     * @return a list of integers where each integer corresponds to the location
+     * in BoxList of one of cell i's neighbors
+     */
     private ArrayList<Integer> findBelowNeighbors(int i) {
         ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
         if ((i % numberOfCols) == 0) {
@@ -292,7 +327,12 @@ public class Controller implements EventHandler<MouseEvent> {
         return listOfNeighbors;
     }
 
+
     @FXML
+    /**
+     * Finds the box corresponding to the input row,col in BoxList and changes its status to true.
+     * Finds the appropriate box from the children of gameBoard and colors this box pink.
+     */
     private void colorSquareAlive(int row, int col) {
         BoxList.set((row*numberOfCols)+col, true);
         String ourId = row + "_" + col;
@@ -305,6 +345,11 @@ public class Controller implements EventHandler<MouseEvent> {
     }
 
 
+    @FXML
+    /**
+     * Finds the box corresponding to the input row, col in BoxList and changes its status to false.
+     * Finds the appropriate box from the children of gameBoard and colors this box gray.
+     */
     private void colorSquareDead(int row, int col) {
         String ourId = row + "_"+ col;
         BoxList.set((row*numberOfCols)+col, false);
@@ -317,53 +362,39 @@ public class Controller implements EventHandler<MouseEvent> {
     }
 
 
-
-    /**
-     * We found this technique on
-     * https://stackoverflow.com/questions/20825935/javafx-get-node-by-row-and-column
-     *
-     * @param row
-     * @param col
-     * @return the node corresponding to the box that we're changing to alive or dead
-     */
-    /*private boolean findBoxByRowCol(int row, int col) {
-        javafx.collections.ObservableList<javafx.scene.Node> children = gameBoard.getChildren();
-
-        for (javafx.scene.Node node : children) {
-            if(gameBoard.getRowIndex(node) == row && gameBoard.getColumnIndex(node) == col) {
-                result = node;
-                break;
-            }
-        }
-        return result;
-    }
-    */
-
-
-
     @Override
     @FXML
     public void handle(MouseEvent click) {
       //for some reason we need this to run
     }
 
+
+    /**
+     * Interprets the user's click by finding which box they clicked on and calling the appropriate
+     * method to change that box's color.
+     *
+     * @param click
+     */
     public void handleClick(MouseEvent click) {
         if (helpBoxVisible) {
-            //hide help box somehow
+            this.helpSection.toBack();
+            this.helpRectangle.toBack();
             helpBoxVisible = false;
         }
-        int row = (int) ((click.getY()- click.getY() % boxWidth) / ((int)boxWidth));
-        int col = (int) ((click.getX() - click.getX() % boxWidth) / ((int)boxWidth));
-        if (paused) {
-            this.time = 0;
-            int listIndex = (row * numberOfCols) + col;
-            Boolean lifeStatus = BoxList.get(listIndex);
-            if (lifeStatus) {
-                colorSquareDead(row, col);
-                BoxList.set(listIndex, false);
-            } else {
-                colorSquareAlive(row, col);
-                BoxList.set(listIndex, true);
+        else {
+            int row = (int) ((click.getY() - click.getY() % boxWidth) / ((int) boxWidth));
+            int col = (int) ((click.getX() - click.getX() % boxWidth) / ((int) boxWidth));
+            if (paused) {
+                this.time = 0;
+                int listIndex = (row * numberOfCols) + col;
+                Boolean lifeStatus = BoxList.get(listIndex);
+                if (lifeStatus) {
+                    colorSquareDead(row, col);
+                    BoxList.set(listIndex, false);
+                } else {
+                    colorSquareAlive(row, col);
+                    BoxList.set(listIndex, true);
+                }
             }
         }
     }
@@ -397,6 +428,9 @@ public class Controller implements EventHandler<MouseEvent> {
     }
 
     @FXML
+    /**
+     * Changes all squares to dead and stops the timer
+     */
     public void onResetButton(ActionEvent actionEvent) {
         if (!this.paused) {
             this.timer.cancel();
@@ -406,23 +440,25 @@ public class Controller implements EventHandler<MouseEvent> {
             BoxList.set(i, false);
             gameBoard.getChildren().get(i+numberOfCols+numberOfRows-2).setStyle("-fx-fill: lightgrey");
         }
+        this.score=0;
+        this.time=0;
     }
 
+    /**
+     * Makes the help box, that is, the instructions, visible along with the rectangle  that
+     * goes behind the text to make it visible.
+     * @param actionEvent
+     */
     public void onQuestionButton(ActionEvent actionEvent) {
         if (! helpBoxVisible) {
-            this.helpSection.setWrappingWidth(gameBoardWidth/3);
             this.helpRectangle.toFront();
             this.helpSection.toFront();
             helpBoxVisible = true;
-
-            //show help box somehow
         }
         else {
-            //this.helpSection.setText("");
             this.helpRectangle.toBack();
             this.helpSection.toBack();
             helpBoxVisible = false;
-            // hide help box somehow
         }
     }
 }
