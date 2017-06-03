@@ -12,6 +12,7 @@ Graphic user interface for Game of Life simulation, Software Design final projec
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.shape.Rectangle?>
 
 <AnchorPane fx:controller="lifeSimulation.Controller" xmlns:fx="http://javafx.com/fxml">
 
@@ -25,7 +26,15 @@ Graphic user interface for Game of Life simulation, Software Design final projec
 
     <Label fx:id="scoreLabel" AnchorPane.leftAnchor="210" AnchorPane.topAnchor="30" />
 
-    <Text fx:id="helpSection" AnchorPane.leftAnchor="170" AnchorPane.topAnchor="30" />
+    <Text fx:id="helpSection" AnchorPane.leftAnchor="240" AnchorPane.topAnchor="90" text="Welcome to the Game of Life.
+    To begin playing, click on any set of boxes. When you press play, a simulation will begin.
+    If a box is 'alive', then it will stay alive if it's next to 2 or 3 other 'alive' boxes.
+    If a box is dead, it will become alive if it has exactly 3 live neighbors.
+    You can press Pause to look at a particular configuration or add more alive boxes (but doing this will restart the generation timer).
+    The arrow at the bottom of the screen toggles a graph that shows population of the cells over time as the simulation is taking place.
+    Press the question button again to close this box." />
+
+    <Rectangle fx:id="helpRectangle" AnchorPane.leftAnchor="240" AnchorPane.topAnchor="90" width = "280" height = "230" fill="azure"/>
 
     <Button fx:id="questionButton" AnchorPane.rightAnchor="30" AnchorPane.topAnchor="15" onAction="#onQuestionButton">
         <graphic>

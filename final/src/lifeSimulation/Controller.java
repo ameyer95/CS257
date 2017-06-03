@@ -35,6 +35,7 @@ public class Controller implements EventHandler<MouseEvent> {
     @FXML private Label timeKeeperLabel;
     @FXML private Label scoreLabel;
     @FXML private Text helpSection;
+    @FXML private Rectangle helpRectangle;
     @FXML private Button questionButton;
     @FXML private AnchorPane gameBoard;
 
@@ -409,23 +410,17 @@ public class Controller implements EventHandler<MouseEvent> {
 
     public void onQuestionButton(ActionEvent actionEvent) {
         if (! helpBoxVisible) {
-            //this.helpSection.setText("Welcome to the Game of Life. To begin playing, click on any set of boxes." +
-             //               "When you press play, a simulation will begin. If a box is 'alive', then it will stay alive if it's next to 2 or 3 other 'alive' boxes. If a box " +
-             //       "is dead, it will become alive if it has exactly 3 live neighbors. You can press Pause to look at a particular configuration or add more alive boxes " +
-              //              "(but doing this will restart the generation timer). The arrow at the bottom of the screen toggles a graph that shows population of the cells over time " +
-              //      "as the simulation is taking place.");
-            this.helpSection.setWrappingWidth(200);
-            this.helpSection.setText("Welcome to the Game of Life. To begin playing, click on any set of boxes. " +
-                            "When you press play, a simulation will begin. If a box is 'alive', then it will stay alive if it's next to 2 or 3 other " +
-                    "'alive' boxes. If a box is dead, it will become alive if it has exactly 3 live neighbors. You can press Pause to look at a particular " +
-                    "configuration or add more alive boxes (but doing this will restart the generation timer). The arrow at the bottom of the screen toggles " +
-                            "a graph that shows population of the cells over time as the simulation is taking place.");
+            this.helpSection.setWrappingWidth(gameBoardWidth/3);
+            this.helpRectangle.toFront();
+            this.helpSection.toFront();
             helpBoxVisible = true;
 
             //show help box somehow
         }
         else {
-            this.helpSection.setText("");
+            //this.helpSection.setText("");
+            this.helpRectangle.toBack();
+            this.helpSection.toBack();
             helpBoxVisible = false;
             // hide help box somehow
         }
