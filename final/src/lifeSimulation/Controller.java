@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
@@ -38,6 +39,7 @@ public class Controller implements EventHandler<MouseEvent> {
     @FXML private Rectangle helpRectangle;
     @FXML private Button questionButton;
     @FXML private AnchorPane gameBoard;
+    @FXML private Polygon graphArrow;
 
     private int score; //number of boxes that are alive
     private int time = 0;
@@ -56,6 +58,8 @@ public class Controller implements EventHandler<MouseEvent> {
     private double boxWidth = gameBoardWidth / numberOfCols;
 
     public void initialize() {
+        //make arrow clearish
+        graphArrow.setStyle("-fx-opacity:0.75;");
         //draw vertical lines on gameBoard
         for (int col = 1; col < numberOfCols; col++){
             Line line = new Line();
@@ -460,6 +464,9 @@ public class Controller implements EventHandler<MouseEvent> {
             this.helpSection.toBack();
             helpBoxVisible = false;
         }
+    }
+    public void onArrow(ActionEvent actionEvent) {
+        System.out.println("Hello!");
     }
 }
 

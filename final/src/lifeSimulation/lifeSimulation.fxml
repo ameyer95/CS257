@@ -11,9 +11,12 @@ Graphic user interface for Game of Life simulation, Software Design final projec
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.image.*?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.shape.Polygon?>
 
+
+<?import java.lang.Double?>
 <AnchorPane fx:controller="lifeSimulation.Controller" xmlns:fx="http://javafx.com/fxml">
 
     <Button fx:id="resetButton" text="Reset" AnchorPane.leftAnchor="30" AnchorPane.topAnchor="15" onAction="#onResetButton"/>
@@ -26,15 +29,14 @@ Graphic user interface for Game of Life simulation, Software Design final projec
 
     <Label fx:id="scoreLabel" AnchorPane.leftAnchor="210" AnchorPane.topAnchor="30" />
 
-    <Text fx:id="helpSection" AnchorPane.leftAnchor="240" AnchorPane.topAnchor="90" text="Welcome to the Game of Life.
-    To begin playing, click on any set of boxes. When you press play, a simulation will begin.
-    If a box is 'alive', then it will stay alive if it's next to 2 or 3 other 'alive' boxes.
-    If a box is dead, it will become alive if it has exactly 3 live neighbors.
-    You can press Pause to look at a particular configuration or add more alive boxes (but doing this will restart the generation timer).
-    The arrow at the bottom of the screen toggles a graph that shows population of the cells over time as the simulation is taking place.
-    Click anywhere on the board to close this box." wrappingWidth="266"/>
+    <Text fx:id="helpSection"  AnchorPane.leftAnchor="145" AnchorPane.topAnchor="190" text="Welcome to the Game of Life. To begin playing, click on any set of boxes. When you press play, a simulation will begin. If a box is 'alive', then it will stay alive if it's next to 2 or 3 other 'alive' boxes. If a box is dead, it will become alive if it has exactly 3 live neighbors. You can press Pause to look at a particular configuration or add more alive boxes (but doing this will restart the generation timer). The arrow at the bottom of the screen toggles a graph that shows population of the cells over time as the simulation is taking place. Click anywhere on the board to close this box."
+          wrappingWidth="510">
+        <font>
+            <Font name="Comic Sans MS" size="16.0"/>
+        </font>
+    </Text>
 
-    <Rectangle fx:id="helpRectangle" AnchorPane.leftAnchor="240" AnchorPane.topAnchor="90" width = "280" height = "230" fill="azure"/>
+    <Rectangle fx:id="helpRectangle" AnchorPane.leftAnchor="125" AnchorPane.topAnchor="175" width = "550" height = "230" fill="azure"/>
 
     <Button fx:id="questionButton" AnchorPane.rightAnchor="30" AnchorPane.topAnchor="15" onAction="#onQuestionButton">
         <graphic>
@@ -47,7 +49,12 @@ Graphic user interface for Game of Life simulation, Software Design final projec
     <AnchorPane fx:id="gameBoard"
            AnchorPane.topAnchor="60" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
                 style="-fx-background-color: #bbb; -fx-border-color:black; -fx-border-width:1px 0px 1px 0px;">
-
-
     </AnchorPane>
+    <Polygon fx:id = "graphArrow" AnchorPane.bottomAnchor="25" fill="white" onMouseClicked="#onArrow">
+        <points>
+            <Double fx:value="482.0" /><Double fx:value="32.0" />
+            <Double fx:value="318.0" /><Double fx:value="32.0" />
+            <Double fx:value="400.0" /><Double fx:value="18.0" />
+        </points>
+    </Polygon>
 </AnchorPane>
