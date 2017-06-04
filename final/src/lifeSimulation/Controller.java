@@ -15,38 +15,35 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import java.util.ArrayList;
+
+import java.util.*;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import jdk.internal.util.xml.impl.Pair;
-import java.util.LinkedList;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import java.util.Timer;
-import java.util.TimerTask;
+
 
 
 public class Controller implements EventHandler<MouseEvent> {
     final private double FRAMES_PER_SECOND = 2.0;
 
-    @FXML private Button pauseButton;
     @FXML private Button playButton;
-    @FXML private Button resetButton;
     @FXML private Label timeKeeperLabel;
     @FXML private Label scoreLabel;
     @FXML private Text helpSection;
     @FXML private Rectangle helpRectangle;
-    @FXML private Button questionButton;
     @FXML private AnchorPane gameBoard;
     @FXML private Polygon graphArrow;
     @FXML private NumberAxis xAxis;
     @FXML private NumberAxis yAxis;
     @FXML private LineChart lineChart;
     @FXML private XYChart.Series series = new XYChart.Series();
+
 
     private int score; //number of boxes that are alive
     private int time = 0;
@@ -61,11 +58,11 @@ public class Controller implements EventHandler<MouseEvent> {
     //keeps track of population over time for graph
     private LinkedList<Integer> dataList = new LinkedList<Integer>();
 
-    private int numberOfRows = 30;
-    private int numberOfCols = 40;
+    private int numberOfRows = 31;
+    private int numberOfCols = 41;
 
-    private int gameBoardWidth = 800;     //get from Main() window width
-    private int gameBoardHeight = 600;    // get from Main() window height - top AnchorPane in FXML file
+    private int gameBoardWidth = 820;     //get from Main() window width
+    private int gameBoardHeight = 620;    // get from Main() window height - top AnchorPane in FXML file
     private double boxWidth = gameBoardWidth / numberOfCols;
 
     /**
@@ -80,6 +77,7 @@ public class Controller implements EventHandler<MouseEvent> {
         this.xAxis.setAutoRanging(true);
         this.yAxis.setAutoRanging(true);
         this.lineChart.getData().add(series);
+        this.lineChart.setLegendVisible(false);
 
         //draw vertical lines on gameBoard
         for (int col = 1; col < numberOfCols; col++){
@@ -266,42 +264,17 @@ public class Controller implements EventHandler<MouseEvent> {
     private ArrayList<Integer> findSideNeighbors(int i) {
         ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
         if ((i % numberOfCols) == 0) {
-            listOfNeighbors.addAll(leftColumnSpecialCase(i));
+            listOfNeighbors.add(i + 1);
+            listOfNeighbors.add(i + numberOfCols - 1);
         }
         else if ((i % numberOfCols) == (numberOfCols -1 )) {
-            listOfNeighbors.addAll(rightColumnSpecialCase(i));
+            listOfNeighbors.add(i - 1);
+            listOfNeighbors.add(i - numberOfCols + 1);
         }
         else {
             listOfNeighbors.add(i-1);
             listOfNeighbors.add(i+1);
         }
-        return listOfNeighbors;
-    }
-
-    /**
-     * Handles finding the neighbors of cell i when i is in the left-most column. Want the simulations
-     * to mod around the board.
-     * @param i index in BoxList of the cell we are finding neighbors of
-     * @return a list of integers where each integer corresponds to the index in
-     * BoxList of one of i's neighbors
-     */
-    private ArrayList<Integer> leftColumnSpecialCase(int i) {
-        ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
-        listOfNeighbors.add(i+1);
-        listOfNeighbors.add(i + (numberOfCols -1));
-        return listOfNeighbors;
-    }
-
-    /**
-     * Handles finding the neighbors of cell i when i is in the right-most column
-     * @param i index in BoxList of the cell we are finding neighbors of
-     * @return a list of integers where each integer corresponds to the index in
-     * BoxList of one of i's neighbors.
-     */
-    private ArrayList<Integer> rightColumnSpecialCase(int i) {
-        ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
-        listOfNeighbors.add(i-1);
-        listOfNeighbors.add(i - (numberOfCols -1));
         return listOfNeighbors;
     }
 
@@ -316,21 +289,29 @@ public class Controller implements EventHandler<MouseEvent> {
         //if box in L column
         if ((i % numberOfCols) == 0) {
             if (i >= numberOfCols) {
-                listOfNeighbors.addAll(leftColumnSpecialCase(i - numberOfCols));
+                listOfNeighbors.add(i- numberOfCols + 1);
+                listOfNeighbors.add(i - 1);
+                listOfNeighbors.add(i - numberOfCols);
             }
             //if box in top row, above neighbors are in bottom row
             else {
-                listOfNeighbors.addAll(leftColumnSpecialCase(numberOfCols * (numberOfRows - 1)));
+                listOfNeighbors.add(numberOfCols * (numberOfRows - 1));
+                listOfNeighbors.add(numberOfCols * numberOfRows - 1);
+                listOfNeighbors.add(numberOfCols * (numberOfRows - 1) + 1);
             }
         }
         //if box in R column
         else if ((i % numberOfCols) == (numberOfCols - 1)) {
             if (i > numberOfCols) {
-                listOfNeighbors.addAll(rightColumnSpecialCase(i - numberOfCols));
+                listOfNeighbors.add(i - numberOfCols);
+                listOfNeighbors.add(i - numberOfCols -1);
+                listOfNeighbors.add(i - 2 * numberOfCols + 1);
             }
             //if box in top row, above neighbors are in bottom row
             else {
-                listOfNeighbors.addAll(rightColumnSpecialCase(numberOfCols * numberOfRows - 1));
+                 listOfNeighbors.add(numberOfCols * numberOfRows - 1);
+                 listOfNeighbors.add(numberOfCols * (numberOfRows - 1));
+                 listOfNeighbors.add(numberOfCols * numberOfRows - 2);
             }
         }
         //standard case
@@ -360,21 +341,29 @@ public class Controller implements EventHandler<MouseEvent> {
         //Edge case: L column
         if ((i % numberOfCols) == 0) {
             if (i < (numberOfCols*(numberOfRows - 1))) {
-                listOfNeighbors.addAll(leftColumnSpecialCase(i + numberOfCols));
+                listOfNeighbors.add(i + numberOfCols);
+                listOfNeighbors.add(i + numberOfCols + 1);
+                listOfNeighbors.add(i + 2 * numberOfCols - 1);
             }
             //if box in bottom row, top row is bottom neighbors
             else {
-                listOfNeighbors.addAll(leftColumnSpecialCase(i % numberOfCols));
+                listOfNeighbors.add(0);
+                listOfNeighbors.add(1);
+                listOfNeighbors.add(numberOfCols - 1);
             }
         }
         //Edge case: R column
         else if ((i % numberOfCols) == (numberOfCols - 1)) {
             if (i < (numberOfCols * (numberOfRows - 1))) {
-                listOfNeighbors.addAll(rightColumnSpecialCase(i + numberOfCols));
+                listOfNeighbors.add(i + numberOfCols);
+                listOfNeighbors.add(i + numberOfCols - 1);
+                listOfNeighbors.add(i + 1);
             }
             //if box in bottom row, top row is bottom neighbors
             else {
-                listOfNeighbors.addAll(rightColumnSpecialCase(i % numberOfCols));
+                listOfNeighbors.add(0);
+                listOfNeighbors.add(numberOfCols - 1);
+                listOfNeighbors.add(numberOfCols - 2);
             }
         }
         //standard case
@@ -462,6 +451,7 @@ public class Controller implements EventHandler<MouseEvent> {
                 this.time = 0;
                 int listIndex = (row * numberOfCols) + col;
                 Boolean lifeStatus = BoxList.get(listIndex);
+                System.out.println(listIndex);
                 if (lifeStatus) {
                     colorSquareDead(row, col);
                     BoxList.set(listIndex, false);
@@ -550,6 +540,59 @@ public class Controller implements EventHandler<MouseEvent> {
         }
         else{
             hideGraph();
+        }
+    }
+
+    public void onMenuBar(ActionEvent actionEvent) {
+
+    }
+
+    public void onItem0(ActionEvent actionEvent) {
+        serialize(0);
+    }
+
+    public void onItem1(ActionEvent actionevent) {
+        serialize(1);
+    }
+
+    public void onItem2(ActionEvent actionEvent) {
+        serialize(2);
+    }
+
+    public void onItem3(ActionEvent actionEvent) {
+        serialize(3);
+    }
+    private void serialize(int choice) {
+        this.time = 0;
+        this.series.getData().clear();
+        ArrayList<Integer> choices = new ArrayList<>();
+        if (choice == 0) {
+            choices.addAll(Arrays.asList(127, 168, 209, 128, 170, 297, 338, 379, 298, 340, 182, 223, 264, 183, 225, 580, 621, 662,
+                    581, 623, 672, 713, 754, 673, 715, 885, 926, 967, 886, 928, 358, 399, 440, 359, 401, 945, 986,
+                    1027, 946, 988, 691, 732, 773, 692, 734));
+        }
+        else if (choice == 1) {
+            choices.addAll(Arrays.asList(1250, 1209, 1168, 1127, 1086, 1045, 1004, 963, 922, 881, 840, 799, 758, 717,
+                    676, 635, 594, 553, 512, 471, 430, 389, 348, 307, 266, 225, 184, 143, 102, 61, 20, 615, 616, 617,
+                    618, 619, 620, 621, 622, 623, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 636, 637, 638,
+                    639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 651, 650, 652, 653, 654, 655));
+        }
+        else if (choice == 2) {
+            choices.addAll(Arrays.asList(552, 511, 470, 472, 513, 554, 596, 597, 598, 678, 679, 680, 718, 759, 800,
+                    716, 757, 798, 674, 673, 672, 592, 591, 590, 391, 392, 393, 387, 386, 385, 465, 506, 547, 711,
+                    752, 793, 877, 878, 879, 883, 884, 885, 805, 764, 723, 559, 477, 518));
+        }
+        else {
+            choices.addAll(Arrays.asList(511, 470, 471, 512, 551, 554, 549, 590, 556, 597, 672, 714, 715, 756, 757, 758,
+                    759, 718, 719, 679, 431, 432, 428, 427, 839, 880, 881, 840));
+        }
+        for (int i=0; i<BoxList.size(); i++) {
+            BoxList.set(i, false);
+            colorSquareDead((i - (i % numberOfCols)) / numberOfCols, i % numberOfCols);
+        }
+        for (int i=0; i<choices.size(); i++) {
+            BoxList.set(choices.get(i), true);
+            colorSquareAlive((choices.get(i) - (choices.get(i) % numberOfCols)) / numberOfCols, choices.get(i) % numberOfCols);
         }
     }
 }

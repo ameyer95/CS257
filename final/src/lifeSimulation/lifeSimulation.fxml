@@ -14,6 +14,10 @@ Graphic user interface for Game of Life simulation, Software Design final projec
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import java.lang.Double?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
 <AnchorPane fx:controller="lifeSimulation.Controller" xmlns:fx="http://javafx.com/fxml">
 
@@ -26,6 +30,20 @@ Graphic user interface for Game of Life simulation, Software Design final projec
     <Label fx:id="timeKeeperLabel" AnchorPane.leftAnchor="210" AnchorPane.topAnchor="15" />
 
     <Label fx:id="scoreLabel" AnchorPane.leftAnchor="210" AnchorPane.topAnchor="30" />
+
+    <MenuBar fx:id="menu" AnchorPane.rightAnchor="90" AnchorPane.topAnchor="15" onContextMenuRequested="#onMenuBar">
+        <menus>
+            <Menu text="Choose a preset design">
+                <items>
+                    <MenuItem fx:id="item0" text="Gliders" onAction="#onItem0"> </MenuItem>
+                    <MenuItem fx:id="item1" text="Giant cross" onAction="#onItem1"> </MenuItem>
+                    <MenuItem fx:id="item2" text="Pulsar" onAction="#onItem2"> </MenuItem>
+                    <MenuItem fx:id="item3" text="Spaceship" onAction="#onItem3"></MenuItem>
+                </items>
+            </Menu>
+
+        </menus>
+    </MenuBar>
 
     <Text fx:id="helpSection"  AnchorPane.leftAnchor="145" AnchorPane.topAnchor="190" text="Welcome to the Game of Life. To begin playing, click on any set of boxes. When you press play, a simulation will begin. If a box is 'alive', then it will stay alive if it's next to 2 or 3 other 'alive' boxes. If a box is dead, it will become alive if it has exactly 3 live neighbors. You can press Pause to look at a particular configuration or add more alive boxes (but doing this will restart the generation timer). The arrow at the bottom of the screen toggles a graph that shows population of the cells over time as the simulation is taking place. Click anywhere on the board to close this box."
           wrappingWidth="510">
@@ -47,7 +65,7 @@ Graphic user interface for Game of Life simulation, Software Design final projec
     <AnchorPane fx:id="gameBoard" AnchorPane.topAnchor="60" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
                 style="-fx-background-color: #bbb; -fx-border-color:black; -fx-border-width:1px 0px 1px 0px;">
     </AnchorPane>
-    <Polygon fx:id = "graphArrow" AnchorPane.bottomAnchor="25" fill="white" onMouseClicked="#onArrow">
+    <Polygon fx:id = "graphArrow" AnchorPane.bottomAnchor="10" fill="white" onMouseClicked="#onArrow">
         <points>
             <Double fx:value="482.0" /><Double fx:value="32.0" />
             <Double fx:value="318.0" /><Double fx:value="32.0" />
@@ -55,12 +73,12 @@ Graphic user interface for Game of Life simulation, Software Design final projec
         </points>
     </Polygon>
 
-    <LineChart fx:id="lineChart" AnchorPane.bottomAnchor="60" maxWidth="800" maxHeight="200">
+    <LineChart fx:id="lineChart" AnchorPane.bottomAnchor="35" minWidth="800" maxHeight="210">
         <xAxis>
-            <NumberAxis fx:id="xAxis" side="BOTTOM" />
+            <NumberAxis fx:id="xAxis" label="Generation"  side="BOTTOM" />
         </xAxis >
         <yAxis>
-            <NumberAxis fx:id="yAxis" side="LEFT" />
+            <NumberAxis fx:id="yAxis" label="Population" side="LEFT" />
         </yAxis>
     </LineChart>
 
