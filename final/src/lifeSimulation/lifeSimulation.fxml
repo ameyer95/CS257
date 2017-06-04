@@ -4,9 +4,6 @@ Created by Patty Commins and Anna Meyer
 Graphic user interface for Game of Life simulation, Software Design final project, Spring 2017
 -->
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.GridPane?>
-
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -16,8 +13,8 @@ Graphic user interface for Game of Life simulation, Software Design final projec
 <?import javafx.scene.shape.Polygon?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
-
 <?import java.lang.Double?>
+
 <AnchorPane fx:controller="lifeSimulation.Controller" xmlns:fx="http://javafx.com/fxml">
 
     <Button fx:id="resetButton" text="Reset" AnchorPane.leftAnchor="30" AnchorPane.topAnchor="15" onAction="#onResetButton"/>
@@ -47,8 +44,7 @@ Graphic user interface for Game of Life simulation, Software Design final projec
         </graphic>
     </Button>
 
-    <AnchorPane fx:id="gameBoard"
-           AnchorPane.topAnchor="60" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
+    <AnchorPane fx:id="gameBoard" AnchorPane.topAnchor="60" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
                 style="-fx-background-color: #bbb; -fx-border-color:black; -fx-border-width:1px 0px 1px 0px;">
     </AnchorPane>
     <Polygon fx:id = "graphArrow" AnchorPane.bottomAnchor="25" fill="white" onMouseClicked="#onArrow">
@@ -60,9 +56,11 @@ Graphic user interface for Game of Life simulation, Software Design final projec
     </Polygon>
 
     <LineChart fx:id="lineChart" AnchorPane.bottomAnchor="60" maxWidth="800" maxHeight="200">
-        <xAxis><NumberAxis fx:id="xAxis" side="BOTTOM" />
+        <xAxis>
+            <NumberAxis fx:id="xAxis" side="BOTTOM" />
         </xAxis >
-        <yAxis> <NumberAxis fx:id="yAxis" side="LEFT" />
+        <yAxis>
+            <NumberAxis fx:id="yAxis" side="LEFT" />
         </yAxis>
     </LineChart>
 

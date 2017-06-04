@@ -16,7 +16,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import java.util.ArrayList;
-
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
@@ -27,7 +26,6 @@ import java.util.LinkedList;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -59,6 +57,8 @@ public class Controller implements EventHandler<MouseEvent> {
 
     // This is the Model
     private ArrayList<Boolean> BoxList = new ArrayList<Boolean>();
+
+    //keeps track of population over time for graph
     private LinkedList<Integer> dataList = new LinkedList<Integer>();
 
     private int numberOfRows = 30;
@@ -68,9 +68,15 @@ public class Controller implements EventHandler<MouseEvent> {
     private int gameBoardHeight = 600;    // get from Main() window height - top AnchorPane in FXML file
     private double boxWidth = gameBoardWidth / numberOfCols;
 
+    /**
+     * Sets up the board - draws the grid, makes the arrow transparent, creates list of boxes, and directs clicks on the
+     * gameboard.
+     */
     public void initialize() {
-        //make arrow clearish
+
+        //make graph arrow transparent
         graphArrow.setStyle("-fx-opacity:0.75;");
+
         this.xAxis.setAutoRanging(true);
         this.yAxis.setAutoRanging(true);
 
@@ -111,6 +117,7 @@ public class Controller implements EventHandler<MouseEvent> {
                 BoxList.add(false);
             }
         }
+
         hideGraph();
 
         gameBoard.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -131,13 +138,21 @@ public class Controller implements EventHandler<MouseEvent> {
         this.time = 0;
     }
 
+    /**
+     * hideGraph() puts the graph and all its components behind the gameBoard, and creates a new series
+     */
     private void hideGraph() {
         this.graphVisible = false;
         this.lineChart.toBack();
         this.xAxis.toBack();
         this.yAxis.toBack();
+        //new series to avoid adding same series repeatedly if we turn on/off graph throughout simulation
         this.series = new XYChart.Series();
     }
+
+    /**
+     * showGraph() brings the graph and its components in front of the gameboard.
+     */
     private void showGraph() {
         this.graphVisible = true;
         this.lineChart.toFront();
@@ -145,6 +160,7 @@ public class Controller implements EventHandler<MouseEvent> {
         this.yAxis.toFront();
         this.lineChart.getData().add(series);
     }
+
     /**
      * Starts and maintains the timer
      */
@@ -160,24 +176,22 @@ public class Controller implements EventHandler<MouseEvent> {
                 });
             }
         };
-
         long frameTimeInMilliseconds = (long)(1000.0 / FRAMES_PER_SECOND);
         this.timer.schedule(timerTask, 0, frameTimeInMilliseconds);
     }
+
 
     /**
      * Iterate through the grid to update the simulation to the next stage.
      * Check positions and neighbors and recolor boxes as necessary
      */
     private void updateAnimation() {
-        // check positions & neighbors and recolor boxes as necessary
         ArrayList<Integer> aliveList = new ArrayList<Integer>();
         ArrayList<Integer> deadList = new ArrayList<Integer>();
         Boolean aliveBox;
         dataList.add(score);
         int col;
         int row;
-
         for (int i=0; i < BoxList.size(); i++) {
             aliveBox = findNeighbors(BoxList.get(i), i);
             if (aliveBox) {
@@ -190,26 +204,29 @@ public class Controller implements EventHandler<MouseEvent> {
         this.score = aliveList.size();
         this.timeKeeperLabel.setText("Generation: " + this.time);
         this.scoreLabel.setText("Population: " + this.score);
+        //colors boxes that change to alive
         for (int j = 0; j < aliveList.size(); j++) {
             BoxList.set(aliveList.get(j),true);
             col = aliveList.get(j) % numberOfCols;
             row = (aliveList.get(j) - col) / numberOfCols;
             colorSquareAlive(row, col);
         }
+        //uncolors dead boxes
         for (int k = 0; k < deadList.size(); k++) {
             BoxList.set(deadList.get(k), false);
             col = deadList.get(k) % numberOfCols;
             row = (deadList.get(k) - col) / numberOfCols;
             colorSquareDead(row, col);
         }
+
+        //add current population and generation as a  point to graph
         if (this.graphVisible) {
-            System.out.println("hello!");
             this.series.getData().add(new XYChart.Data(time, score));
         }
     }
 
     /**
-     * Counts the number of i's neighbors who are alive and specifies the color of i for the next generation accordingly
+     * Counts the number of i's neighbors who are alive and determines i's life status
      * @param alive includes the current life status of cell i to simplify the case where i has 2 alive neighbors
      * @param i the index in BoxList of the cell
      * @return boolean value specifying the lifeStatus of cell i in the next generation of the simulation
@@ -221,6 +238,7 @@ public class Controller implements EventHandler<MouseEvent> {
         listOfNeighbors.addAll(findAboveNeighbors(i));
         listOfNeighbors.addAll(findBelowNeighbors(i));
 
+        //iterate through list of neighbors to add to alive count
         for (int j = 0; j < listOfNeighbors.size(); j++) {
             if (BoxList.get(listOfNeighbors.get(j))) {
                 numberOfNeighborsAlive ++;
@@ -236,6 +254,8 @@ public class Controller implements EventHandler<MouseEvent> {
         else if (numberOfNeighborsAlive == 3 ) {
             return true;
         }
+        //only other case left is that numberOfNeighborsAlive is 2. If alive, rules dictate it survives. If dead, it
+        //remains dead.
         return lifeStatus;
     }
 
@@ -262,7 +282,8 @@ public class Controller implements EventHandler<MouseEvent> {
     }
 
     /**
-     * Handles finding the neighbors of cell i when i is in the left-most column
+     * Handles finding the neighbors of cell i when i is in the left-most column. Want the simulations
+     * to mod around the board.
      * @param i index in BoxList of the cell we are finding neighbors of
      * @return a list of integers where each integer corresponds to the index in
      * BoxList of one of i's neighbors
@@ -295,22 +316,27 @@ public class Controller implements EventHandler<MouseEvent> {
      */
     private ArrayList<Integer> findAboveNeighbors(int i) {
         ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
+        //if box in L column
         if ((i % numberOfCols) == 0) {
             if (i >= numberOfCols) {
                 listOfNeighbors.addAll(leftColumnSpecialCase(i - numberOfCols));
             }
+            //if box in top row, above neighbors are in bottom row
             else {
                 listOfNeighbors.addAll(leftColumnSpecialCase(numberOfCols * (numberOfRows - 1)));
             }
         }
+        //if box in R column
         else if ((i % numberOfCols) == (numberOfCols - 1)) {
             if (i > numberOfCols) {
                 listOfNeighbors.addAll(rightColumnSpecialCase(i - numberOfCols));
             }
+            //if box in top row, above neighbors are in bottom row
             else {
                 listOfNeighbors.addAll(rightColumnSpecialCase(numberOfCols * numberOfRows - 1));
             }
         }
+        //standard case
         else {
             if (i < numberOfCols) {
                 listOfNeighbors.add(i + (numberOfCols * (numberOfRows - 1)));
@@ -334,22 +360,27 @@ public class Controller implements EventHandler<MouseEvent> {
      */
     private ArrayList<Integer> findBelowNeighbors(int i) {
         ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
+        //Edge case: L column
         if ((i % numberOfCols) == 0) {
             if (i < (numberOfCols*(numberOfRows - 1))) {
                 listOfNeighbors.addAll(leftColumnSpecialCase(i + numberOfCols));
             }
+            //if box in bottom row, top row is bottom neighbors
             else {
                 listOfNeighbors.addAll(leftColumnSpecialCase(i % numberOfCols));
             }
         }
+        //Edge case: R column
         else if ((i % numberOfCols) == (numberOfCols - 1)) {
             if (i < (numberOfCols * (numberOfRows - 1))) {
                 listOfNeighbors.addAll(rightColumnSpecialCase(i + numberOfCols));
             }
+            //if box in bottom row, top row is bottom neighbors
             else {
                 listOfNeighbors.addAll(rightColumnSpecialCase(i % numberOfCols));
             }
         }
+        //standard case
         else {
             if (i >= numberOfCols * (numberOfRows-1)) {
                 listOfNeighbors.add((i % numberOfCols));
@@ -368,13 +399,14 @@ public class Controller implements EventHandler<MouseEvent> {
 
     @FXML
     /**
-     * Finds the box corresponding to the input row,col in BoxList and changes its status to true.
+     * Finds the box corresponding to the input row, col in BoxList and changes its status to true.
      * Finds the appropriate box from the children of gameBoard and colors this box pink.
      */
     private void colorSquareAlive(int row, int col) {
         BoxList.set((row*numberOfCols)+col, true);
         String ourId = row + "_" + col;
         for (int i=0; i<((numberOfCols*numberOfRows)+numberOfRows+numberOfCols-2);i++) {
+            //if statement checks through to find which child of gameboard is our box of interest
             if (gameBoard.getChildren().get(i).getId().equals(ourId)) {
                 gameBoard.getChildren().get(i).setStyle("-fx-fill: palevioletred");
                 break;
@@ -392,6 +424,7 @@ public class Controller implements EventHandler<MouseEvent> {
         String ourId = row + "_"+ col;
         BoxList.set((row*numberOfCols)+col, false);
         for (int i=0; i<((numberOfCols*numberOfRows)+numberOfRows+numberOfCols-2);i++) {
+            //if statement checks through to find which child of gameboard is our box of interest
             if (gameBoard.getChildren().get(i).getId().equals(ourId)) {
                 gameBoard.getChildren().get(i).setStyle("-fx-fill: lightgrey");
                 break;
@@ -410,18 +443,21 @@ public class Controller implements EventHandler<MouseEvent> {
     /**
      * Interprets the user's click by finding which box they clicked on and calling the appropriate
      * method to change that box's color.
-     *
-     * @param click
+     * @param click = A click on the gameboard
      */
     public void handleClick(MouseEvent click) {
+
+        //hide help section upon click
         if (helpBoxVisible) {
             this.helpSection.toBack();
             this.helpRectangle.toBack();
             helpBoxVisible = false;
         }
+        //find which box has been clicked from the given click coordinates
         else {
             int row = (int) ((click.getY() - click.getY() % boxWidth) / ((int) boxWidth));
             int col = (int) ((click.getX() - click.getX() % boxWidth) / ((int) boxWidth));
+            //can only click boxes while simulation is paused
             if (paused) {
                 this.time = 0;
                 int listIndex = (row * numberOfCols) + col;
@@ -437,12 +473,9 @@ public class Controller implements EventHandler<MouseEvent> {
         }
     }
 
-
-
     /**
      * Pause the simulation
-     *
-     * @param actionEvent
+     * @param actionEvent = a click on the Pause button
      */
     public void onPauseButton(ActionEvent actionEvent) {
         if (!this.paused) {
@@ -454,8 +487,7 @@ public class Controller implements EventHandler<MouseEvent> {
 
     /**
      * Play the simulation
-     *
-     * @param actionEvent
+     * @param actionEvent = a click on the Play button
      */
     public void onPlayButton(ActionEvent actionEvent) {
         if (this.paused) {
@@ -482,6 +514,9 @@ public class Controller implements EventHandler<MouseEvent> {
         this.time=0;
         playButton.setStyle("-fx-base: f2f2f2");
         this.series.getData().clear();
+        this.timeKeeperLabel.setText("Generation: " + this.time);
+        this.scoreLabel.setText("Population: " + this.score);
+        hideGraph();
     }
 
     /**
@@ -501,6 +536,11 @@ public class Controller implements EventHandler<MouseEvent> {
             helpBoxVisible = false;
         }
     }
+
+    /**
+     * Shows the graph of population vs time on click. Hides on repeated cick.
+     * @param click = a click on the graph button
+     */
     public void onArrow(MouseEvent click) {
         System.out.println("Hello, graphVisible is " + graphVisible);
         if (!graphVisible){
