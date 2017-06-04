@@ -136,15 +136,15 @@ public class Controller implements EventHandler<MouseEvent> {
         this.lineChart.toBack();
         this.xAxis.toBack();
         this.yAxis.toBack();
-        this.series = new XYChart.Series();
     }
+
     private void showGraph() {
         this.graphVisible = true;
         this.lineChart.toFront();
         this.xAxis.toFront();
         this.yAxis.toFront();
-        this.lineChart.getData().add(series);
     }
+
     /**
      * Starts and maintains the timer
      */
@@ -202,10 +202,7 @@ public class Controller implements EventHandler<MouseEvent> {
             row = (deadList.get(k) - col) / numberOfCols;
             colorSquareDead(row, col);
         }
-        if (this.graphVisible) {
-            System.out.println("hello!");
-            this.series.getData().add(new XYChart.Data(time, score));
-        }
+        this.series.getData().add(new XYChart.Data(time, score));
     }
 
     /**
@@ -423,6 +420,7 @@ public class Controller implements EventHandler<MouseEvent> {
             int row = (int) ((click.getY() - click.getY() % boxWidth) / ((int) boxWidth));
             int col = (int) ((click.getX() - click.getX() % boxWidth) / ((int) boxWidth));
             if (paused) {
+                this.series.getData().clear();
                 this.time = 0;
                 int listIndex = (row * numberOfCols) + col;
                 Boolean lifeStatus = BoxList.get(listIndex);
@@ -461,6 +459,7 @@ public class Controller implements EventHandler<MouseEvent> {
         if (this.paused) {
             this.startTimer();
             playButton.setStyle("-fx-base: A9A9A9");
+            this.lineChart.getData().add(series);
         }
         this.paused = false;
     }
@@ -481,6 +480,7 @@ public class Controller implements EventHandler<MouseEvent> {
         this.score=0;
         this.time=0;
         playButton.setStyle("-fx-base: f2f2f2");
+        //this.lineChart.getData().clear();
         this.series.getData().clear();
     }
 
@@ -502,7 +502,6 @@ public class Controller implements EventHandler<MouseEvent> {
         }
     }
     public void onArrow(MouseEvent click) {
-        System.out.println("Hello, graphVisible is " + graphVisible);
         if (!graphVisible){
             showGraph();
         }
