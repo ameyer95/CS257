@@ -79,6 +79,7 @@ public class Controller implements EventHandler<MouseEvent> {
 
         this.xAxis.setAutoRanging(true);
         this.yAxis.setAutoRanging(true);
+        this.lineChart.getData().add(series);
 
         //draw vertical lines on gameBoard
         for (int col = 1; col < numberOfCols; col++){
@@ -146,6 +147,7 @@ public class Controller implements EventHandler<MouseEvent> {
         this.lineChart.toBack();
         this.xAxis.toBack();
         this.yAxis.toBack();
+        this.graphArrow.setRotate(0);
     }
 
     /**
@@ -156,6 +158,7 @@ public class Controller implements EventHandler<MouseEvent> {
         this.lineChart.toFront();
         this.xAxis.toFront();
         this.yAxis.toFront();
+        this.graphArrow.setRotate(180);
     }
 
     /**
@@ -217,12 +220,6 @@ public class Controller implements EventHandler<MouseEvent> {
         }
 
         this.series.getData().add(new XYChart.Data(time, score));
-
-
-        //add current population and generation as a  point to graph
-        if (this.graphVisible) {
-            this.series.getData().add(new XYChart.Data(time, score));
-        }
     }
 
     /**
@@ -459,7 +456,9 @@ public class Controller implements EventHandler<MouseEvent> {
             int col = (int) ((click.getX() - click.getX() % boxWidth) / ((int) boxWidth));
             //can only click boxes while simulation is paused
             if (paused) {
+                //clears the old data from the lineChart
                 this.series.getData().clear();
+
                 this.time = 0;
                 int listIndex = (row * numberOfCols) + col;
                 Boolean lifeStatus = BoxList.get(listIndex);
@@ -494,7 +493,9 @@ public class Controller implements EventHandler<MouseEvent> {
         if (this.paused) {
             this.startTimer();
             playButton.setStyle("-fx-base: A9A9A9");
-            this.lineChart.getData().add(series);
+            if (this.series.getData().isEmpty()) {
+                //this.lineChart.getData().add(series);
+            }
         }
         this.paused = false;
     }
@@ -515,7 +516,6 @@ public class Controller implements EventHandler<MouseEvent> {
         this.score=0;
         this.time=0;
         playButton.setStyle("-fx-base: f2f2f2");
-        //this.lineChart.getData().clear();
         this.series.getData().clear();
         this.timeKeeperLabel.setText("Generation: " + this.time);
         this.scoreLabel.setText("Population: " + this.score);
