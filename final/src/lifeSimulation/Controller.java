@@ -146,18 +146,11 @@ public class Controller implements EventHandler<MouseEvent> {
         this.lineChart.toBack();
         this.xAxis.toBack();
         this.yAxis.toBack();
-<<<<<<< HEAD
-    }
-
-=======
-        //new series to avoid adding same series repeatedly if we turn on/off graph throughout simulation
-        this.series = new XYChart.Series();
     }
 
     /**
      * showGraph() brings the graph and its components in front of the gameboard.
      */
->>>>>>> f8bda704af6aa4f5ba301a0e10f80117f0c1ea30
     private void showGraph() {
         this.graphVisible = true;
         this.lineChart.toFront();
@@ -222,15 +215,14 @@ public class Controller implements EventHandler<MouseEvent> {
             row = (deadList.get(k) - col) / numberOfCols;
             colorSquareDead(row, col);
         }
-<<<<<<< HEAD
+
         this.series.getData().add(new XYChart.Data(time, score));
-=======
+
 
         //add current population and generation as a  point to graph
         if (this.graphVisible) {
             this.series.getData().add(new XYChart.Data(time, score));
         }
->>>>>>> f8bda704af6aa4f5ba301a0e10f80117f0c1ea30
     }
 
     /**
