@@ -22,6 +22,11 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import jdk.internal.util.xml.impl.Pair;
+import java.util.LinkedList;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,15 +45,21 @@ public class Controller implements EventHandler<MouseEvent> {
     @FXML private Button questionButton;
     @FXML private AnchorPane gameBoard;
     @FXML private Polygon graphArrow;
+    @FXML private NumberAxis xAxis;
+    @FXML private NumberAxis yAxis;
+    @FXML private LineChart lineChart;
+    @FXML private XYChart.Series series = new XYChart.Series();
 
     private int score; //number of boxes that are alive
     private int time = 0;
     private boolean paused;
     private boolean helpBoxVisible;
+    private boolean graphVisible = true;
     private Timer timer;
 
     // This is the Model
     private ArrayList<Boolean> BoxList = new ArrayList<Boolean>();
+    private LinkedList<Integer> dataList = new LinkedList<Integer>();
 
     private int numberOfRows = 30;
     private int numberOfCols = 40;
@@ -60,6 +71,9 @@ public class Controller implements EventHandler<MouseEvent> {
     public void initialize() {
         //make arrow clearish
         graphArrow.setStyle("-fx-opacity:0.75;");
+        this.xAxis.setAutoRanging(true);
+        this.yAxis.setAutoRanging(true);
+
         //draw vertical lines on gameBoard
         for (int col = 1; col < numberOfCols; col++){
             Line line = new Line();
@@ -97,6 +111,7 @@ public class Controller implements EventHandler<MouseEvent> {
                 BoxList.add(false);
             }
         }
+        hideGraph();
 
         gameBoard.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -111,11 +126,25 @@ public class Controller implements EventHandler<MouseEvent> {
      */
     public Controller() {
         this.paused = true;
-        this.helpBoxVisible=false;
+        this.helpBoxVisible=true;
         this.score = 0;
         this.time = 0;
     }
 
+    private void hideGraph() {
+        this.graphVisible = false;
+        this.lineChart.toBack();
+        this.xAxis.toBack();
+        this.yAxis.toBack();
+        this.series = new XYChart.Series();
+    }
+    private void showGraph() {
+        this.graphVisible = true;
+        this.lineChart.toFront();
+        this.xAxis.toFront();
+        this.yAxis.toFront();
+        this.lineChart.getData().add(series);
+    }
     /**
      * Starts and maintains the timer
      */
@@ -145,6 +174,7 @@ public class Controller implements EventHandler<MouseEvent> {
         ArrayList<Integer> aliveList = new ArrayList<Integer>();
         ArrayList<Integer> deadList = new ArrayList<Integer>();
         Boolean aliveBox;
+        dataList.add(score);
         int col;
         int row;
 
@@ -171,6 +201,10 @@ public class Controller implements EventHandler<MouseEvent> {
             col = deadList.get(k) % numberOfCols;
             row = (deadList.get(k) - col) / numberOfCols;
             colorSquareDead(row, col);
+        }
+        if (this.graphVisible) {
+            System.out.println("hello!");
+            this.series.getData().add(new XYChart.Data(time, score));
         }
     }
 
@@ -447,6 +481,7 @@ public class Controller implements EventHandler<MouseEvent> {
         this.score=0;
         this.time=0;
         playButton.setStyle("-fx-base: f2f2f2");
+        this.series.getData().clear();
     }
 
     /**
@@ -466,8 +501,14 @@ public class Controller implements EventHandler<MouseEvent> {
             helpBoxVisible = false;
         }
     }
-    public void onArrow(ActionEvent actionEvent) {
-        System.out.println("Hello!");
+    public void onArrow(MouseEvent click) {
+        System.out.println("Hello, graphVisible is " + graphVisible);
+        if (!graphVisible){
+            showGraph();
+        }
+        else{
+            hideGraph();
+        }
     }
 }
 

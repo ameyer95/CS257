@@ -14,7 +14,8 @@ Graphic user interface for Game of Life simulation, Software Design final projec
 <?import javafx.scene.text.*?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.shape.Polygon?>
-
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
 
 <?import java.lang.Double?>
 <AnchorPane fx:controller="lifeSimulation.Controller" xmlns:fx="http://javafx.com/fxml">
@@ -57,4 +58,12 @@ Graphic user interface for Game of Life simulation, Software Design final projec
             <Double fx:value="400.0" /><Double fx:value="18.0" />
         </points>
     </Polygon>
+
+    <LineChart fx:id="lineChart" AnchorPane.bottomAnchor="60" maxWidth="800" maxHeight="200">
+        <xAxis><NumberAxis fx:id="xAxis" side="BOTTOM" />
+        </xAxis >
+        <yAxis> <NumberAxis fx:id="yAxis" side="LEFT" />
+        </yAxis>
+    </LineChart>
+
 </AnchorPane>
