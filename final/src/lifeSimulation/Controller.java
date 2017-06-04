@@ -562,6 +562,12 @@ public class Controller implements EventHandler<MouseEvent> {
     public void onItem3(ActionEvent actionEvent) {
         serialize(3);
     }
+    public void onItem4(ActionEvent actionEvent) {
+        serialize(4);
+    }
+    public void onItem5(ActionEvent actionEvent){
+        serialize(5);
+    }
     private void serialize(int choice) {
         this.time = 0;
         this.series.getData().clear();
@@ -581,6 +587,19 @@ public class Controller implements EventHandler<MouseEvent> {
             choices.addAll(Arrays.asList(552, 511, 470, 472, 513, 554, 596, 597, 598, 678, 679, 680, 718, 759, 800,
                     716, 757, 798, 674, 673, 672, 592, 591, 590, 391, 392, 393, 387, 386, 385, 465, 506, 547, 711,
                     752, 793, 877, 878, 879, 883, 884, 885, 805, 764, 723, 559, 477, 518));
+        }
+        else if (choice == 4) {
+            choices.addAll(Arrays.asList(635, 675, 715, 755, 795, 835, 875, 915, 955, 995, 1035, 1075, 1115, 1155, 1195, 1235, 595, 677, 593,
+                    555, 515, 475, 435, 395, 355, 315, 275, 235, 195, 155, 115, 75, 35, 719, 761, 803, 845, 887, 929,
+                    971, 1013, 1055, 1097, 1139, 1181, 1223, 1265, 551, 509, 467, 425, 383, 341, 299, 257, 215, 173, 131, 89,
+                    47, 5, 45, 85, 125, 165, 205, 77, 119, 161, 203, 245, 1225, 1185, 1145, 1105, 1065, 1193, 1151, 1109,
+                    1067, 1025));
+        }
+        else if (choice ==5) {
+            choices.addAll(Arrays.asList(513, 473, 593, 633, 673, 511, 469, 427, 595, 637, 679, 433, 713, 753, 793, 833,
+                    873, 913, 953, 993, 1033, 1073,  721, 763, 805, 847, 889, 931, 973, 1015, 1057, 1099,
+                    393, 353, 313, 273, 233, 193, 153, 113, 73, 33, 385, 343, 301, 259, 217,
+                    175, 133, 91, 49, 7, 512, 554, 594, 552));
         }
         else {
             choices.addAll(Arrays.asList(511, 470, 471, 512, 551, 554, 549, 590, 556, 597, 672, 714, 715, 756, 757, 758,
