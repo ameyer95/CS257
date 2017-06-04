@@ -446,6 +446,7 @@ public class Controller implements EventHandler<MouseEvent> {
         }
         this.score=0;
         this.time=0;
+        playButton.setStyle("-fx-base: f2f2f2");
     }
 
     /**
