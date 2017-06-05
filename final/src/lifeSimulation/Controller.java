@@ -132,13 +132,13 @@ public class Controller implements EventHandler<MouseEvent> {
      */
     public Controller() {
         this.paused = true;
-        this.helpBoxVisible=true;
+        this.helpBoxVisible=false;
         this.score = 0;
         this.time = 0;
     }
 
     /**
-     * hideGraph() puts the graph and all its components behind the gameBoard, and creates a new series
+     * hideGraph() puts the graph and all its components behind the gameBoard
      */
     private void hideGraph() {
         this.graphVisible = false;
@@ -216,7 +216,6 @@ public class Controller implements EventHandler<MouseEvent> {
             row = (deadList.get(k) - col) / numberOfCols;
             colorSquareDead(row, col);
         }
-
         this.series.getData().add(new XYChart.Data(time, score));
     }
 
@@ -543,10 +542,12 @@ public class Controller implements EventHandler<MouseEvent> {
         }
     }
 
-    public void onMenuBar(ActionEvent actionEvent) {
 
-    }
-
+    /**
+     * The following methods are called when the corresponding preset graph is called. Then they call serialize(x), where
+     * x corresponds to the preset graph the user wants to view
+     * @param actionEvent
+     */
     public void onItem0(ActionEvent actionEvent) {
         serialize(0);
     }
