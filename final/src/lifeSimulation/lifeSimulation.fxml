@@ -31,7 +31,7 @@ Graphic user interface for Game of Life simulation, Software Design final projec
 
     <Label fx:id="scoreLabel" AnchorPane.leftAnchor="210" AnchorPane.topAnchor="30" />
 
-    <MenuBar fx:id="menu" AnchorPane.rightAnchor="90" AnchorPane.topAnchor="15" onContextMenuRequested="#onMenuBar">
+    <MenuBar fx:id="menu" AnchorPane.rightAnchor="90" AnchorPane.topAnchor="15">
         <menus>
             <Menu text="Choose a preset design">
                 <items>
