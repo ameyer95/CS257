@@ -38,9 +38,10 @@ Graphic user interface for Game of Life simulation, Software Design final projec
                     <MenuItem fx:id="item0" text="Gliders" onAction="#onItem0"> </MenuItem>
                     <MenuItem fx:id="item1" text="Giant cross" onAction="#onItem1"> </MenuItem>
                     <MenuItem fx:id="item2" text="Pulsar" onAction="#onItem2"> </MenuItem>
-                    <MenuItem fx:id="item3" text="Spaceship" onAction="#onItem3"></MenuItem>
-                    <MenuItem fx:id="item4" text="Big Diamonds" onAction="#onItem4"></MenuItem>
-                    <MenuItem fx:id="item5" text="Big X" onAction="#onItem5"></MenuItem>
+                    <MenuItem fx:id="item3" text="Big Diamonds" onAction="#onItem3"></MenuItem>
+                    <MenuItem fx:id="item4" text="Big X" onAction="#onItem4"></MenuItem>
+                    <MenuItem fx:id="item5" text="Spaceship" onAction="#onItem5"></MenuItem>
+                    <MenuItem fx:id="item6" text="Line" onAction="#onItem6"></MenuItem>
                 </items>
             </Menu>
 
