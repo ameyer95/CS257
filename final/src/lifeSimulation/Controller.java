@@ -46,23 +46,20 @@ public class Controller implements EventHandler<MouseEvent> {
 
 
     private int score; //number of boxes that are alive
-    private int time = 0;
+    private int time;
     private boolean paused;
     private boolean helpBoxVisible;
-    private boolean graphVisible = true;
+    private boolean graphVisible;
     private Timer timer;
 
     // This is the Model
     private ArrayList<Boolean> BoxList = new ArrayList<Boolean>();
 
-    //keeps track of population over time for graph
-    private LinkedList<Integer> dataList = new LinkedList<Integer>();
-
     private int numberOfRows = 31;
     private int numberOfCols = 41;
 
-    private int gameBoardWidth = 820;     //get from Main() window width
-    private int gameBoardHeight = 620;    // get from Main() window height - top AnchorPane in FXML file
+    private int gameBoardWidth = 820;
+    private int gameBoardHeight = 620;
     private double boxWidth = gameBoardWidth / numberOfCols;
 
     /**
@@ -132,7 +129,8 @@ public class Controller implements EventHandler<MouseEvent> {
      */
     public Controller() {
         this.paused = true;
-        this.helpBoxVisible=false;
+        this.helpBoxVisible = false;
+        this.graphVisible = false;
         this.score = 0;
         this.time = 0;
     }
@@ -149,7 +147,7 @@ public class Controller implements EventHandler<MouseEvent> {
     }
 
     /**
-     * showGraph() brings the graph and its components in front of the gameboard.
+     * showGraph() brings the graph and its components in front of the gameBoard.
      */
     private void showGraph() {
         this.graphVisible = true;
@@ -187,7 +185,6 @@ public class Controller implements EventHandler<MouseEvent> {
         ArrayList<Integer> aliveList = new ArrayList<Integer>();
         ArrayList<Integer> deadList = new ArrayList<Integer>();
         Boolean aliveBox;
-        dataList.add(score);
         int col;
         int row;
         for (int i=0; i < BoxList.size(); i++) {
@@ -285,7 +282,7 @@ public class Controller implements EventHandler<MouseEvent> {
      */
     private ArrayList<Integer> findAboveNeighbors(int i) {
         ArrayList<Integer> listOfNeighbors = new ArrayList<Integer>();
-        //if box in L column
+        //Edge case: L column
         if ((i % numberOfCols) == 0) {
             if (i >= numberOfCols) {
                 listOfNeighbors.add(i- numberOfCols + 1);
@@ -299,7 +296,7 @@ public class Controller implements EventHandler<MouseEvent> {
                 listOfNeighbors.add(numberOfCols * (numberOfRows - 1) + 1);
             }
         }
-        //if box in R column
+        //Edge case: R column
         else if ((i % numberOfCols) == (numberOfCols - 1)) {
             if (i > numberOfCols) {
                 listOfNeighbors.add(i - numberOfCols);
@@ -391,7 +388,6 @@ public class Controller implements EventHandler<MouseEvent> {
         BoxList.set((row*numberOfCols)+col, true);
         String ourId = row + "_" + col;
         for (int i=0; i<((numberOfCols*numberOfRows)+numberOfRows+numberOfCols-2);i++) {
-            //if statement checks through to find which child of gameboard is our box of interest
             if (gameBoard.getChildren().get(i).getId().equals(ourId)) {
                 gameBoard.getChildren().get(i).setStyle("-fx-fill: palevioletred");
                 break;
@@ -409,7 +405,6 @@ public class Controller implements EventHandler<MouseEvent> {
         String ourId = row + "_"+ col;
         BoxList.set((row*numberOfCols)+col, false);
         for (int i=0; i<((numberOfCols*numberOfRows)+numberOfRows+numberOfCols-2);i++) {
-            //if statement checks through to find which child of gameboard is our box of interest
             if (gameBoard.getChildren().get(i).getId().equals(ourId)) {
                 gameBoard.getChildren().get(i).setStyle("-fx-fill: lightgrey");
                 break;
@@ -421,7 +416,7 @@ public class Controller implements EventHandler<MouseEvent> {
     @Override
     @FXML
     public void handle(MouseEvent click) {
-      //for some reason we need this to run
+      //we need this for the program to run
     }
 
 
@@ -444,13 +439,10 @@ public class Controller implements EventHandler<MouseEvent> {
             int col = (int) ((click.getX() - click.getX() % boxWidth) / ((int) boxWidth));
             //can only click boxes while simulation is paused
             if (paused) {
-                //clears the old data from the lineChart
                 this.series.getData().clear();
-
                 this.time = 0;
                 int listIndex = (row * numberOfCols) + col;
                 Boolean lifeStatus = BoxList.get(listIndex);
-                System.out.println(listIndex);
                 if (lifeStatus) {
                     colorSquareDead(row, col);
                     BoxList.set(listIndex, false);
@@ -482,9 +474,6 @@ public class Controller implements EventHandler<MouseEvent> {
         if (this.paused) {
             this.startTimer();
             playButton.setStyle("-fx-base: A9A9A9");
-            if (this.series.getData().isEmpty()) {
-                //this.lineChart.getData().add(series);
-            }
         }
         this.paused = false;
     }
@@ -506,8 +495,6 @@ public class Controller implements EventHandler<MouseEvent> {
         this.time=0;
         playButton.setStyle("-fx-base: f2f2f2");
         this.series.getData().clear();
-        this.timeKeeperLabel.setText("Generation: " + this.time);
-        this.scoreLabel.setText("Population: " + this.score);
         hideGraph();
     }
 
@@ -544,31 +531,31 @@ public class Controller implements EventHandler<MouseEvent> {
 
 
     /**
-     * The following methods are called when the corresponding preset graph is called. Then they call serialize(x), where
+     * The following methods are called when the corresponding preset graph is called. Then they call preload(x), where
      * x corresponds to the preset graph the user wants to view
      * @param actionEvent
      */
     public void onItem0(ActionEvent actionEvent) {
-        serialize(0);
+        preload(0);
     }
     public void onItem1(ActionEvent actionevent) {
-        serialize(1);
+        preload(1);
     }
     public void onItem2(ActionEvent actionEvent) {
-        serialize(2);
+        preload(2);
     }
     public void onItem3(ActionEvent actionEvent) {
-        serialize(3);
+        preload(3);
     }
     public void onItem4(ActionEvent actionEvent) {
-        serialize(4);
+        preload(4);
     }
     public void onItem5(ActionEvent actionEvent){
-        serialize(5);
+        preload(5);
     }
-    public void onItem6(ActionEvent actionEvent) { serialize(6); }
+    public void onItem6(ActionEvent actionEvent) { preload(6); }
 
-    private void serialize(int choice) {
+    private void preload(int choice) {
         this.time = 0;
         this.series.getData().clear();
         ArrayList<Integer> choices = new ArrayList<>();
